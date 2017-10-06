@@ -9,13 +9,13 @@
 
 // Declaração das estruturas e prototipação dos métodos
 #include "lista-linear-encadeada.h"
-#define DEBUG 1
+#define DEBUG 0
 
 /**
  * Método auxiliar para testes
  */
 LinkedListNode* ls_insert(LinkedListNode *p, Produto prod) {
-    return ls_insertDesc(p, prod);
+    return ls_insertAsc(p, prod);
 }
 
 /**
@@ -102,8 +102,13 @@ LinkedListNode* ls_insertDesc(LinkedListNode *head, Produto prod) {
     // Cria um novo elemento e insere-o na lista
     LinkedListNode* newElm = (struct LinkedListNode *) malloc(sizeof (struct LinkedListNode));
     newElm -> e = prod;
-    ant -> next = newElm;
-    newElm -> next = it;
+    // Se o novo elemento for maior que o atual, ele deve vir antes
+    if (newElm -> e.codigo >= it -> e.codigo) {
+        ant -> next = newElm;
+        newElm -> next = it;
+    } else {
+        it -> next = newElm;
+    }
     return head;
 }
 
@@ -242,9 +247,9 @@ Produto criaProduto(int cod, char valor[]) {
  */
 LinkedListNode* createNewListWithValues() {
     LinkedListNode* head = NULL;
-        head = ls_append(head, criaProduto(3000, "elm3000-H"));
-        head = ls_append(head, criaProduto(4000, "elm4000"));
-        head = ls_append(head, criaProduto(5000, "elm5000-F"));
+    head = ls_append(head, criaProduto(3000, "elm3000-H"));
+    head = ls_append(head, criaProduto(4000, "elm4000"));
+    head = ls_append(head, criaProduto(5000, "elm5000-F"));
     //    head = ls_append(head, criaProduto(2000, "elm2000"));
     //    head = ls_append(head, criaProduto(1000, "elm1000-F"));
     return head;

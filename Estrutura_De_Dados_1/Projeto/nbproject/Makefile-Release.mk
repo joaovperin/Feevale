@@ -62,7 +62,7 @@ ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/projeto.exe: ${OBJECTFILES}
 	${MKDIR} -p ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}
 	${LINK.c} -o ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/projeto ${OBJECTFILES} ${LDLIBSOPTIONS}
 
-${OBJECTDIR}/listas/lista-linear-encadeada.o: listas/lista-linear-encadeada.c 
+${OBJECTDIR}/listas/lista-linear-encadeada.o: listas/lista-linear-encadeada.c
 	${MKDIR} -p ${OBJECTDIR}/listas
 	${RM} "$@.d"
 	$(COMPILE.c) -O2 -std=c99 -MMD -MP -MF "$@.d" -o ${OBJECTDIR}/listas/lista-linear-encadeada.o listas/lista-linear-encadeada.c
@@ -73,7 +73,6 @@ ${OBJECTDIR}/listas/lista-linear-encadeada.o: listas/lista-linear-encadeada.c
 # Clean Targets
 .clean-conf: ${CLEAN_SUBPROJECTS}
 	${RM} -r ${CND_BUILDDIR}/${CND_CONF}
-	${RM} ${CND_DISTDIR}/${CND_CONF}/${CND_PLATFORM}/projeto.exe
 
 # Subprojects
 .clean-subprojects:
