@@ -178,10 +178,7 @@ LinkedListNode* ls_remove(LinkedListNode *head, int cod) {
     free(p -> e.descricao);
     free(p);
     // Se ainda possuir um elemento com o mesmo código deleta-o também
-    if (ls_readKey(head, cod) != NULL) {
-        return ls_remove(head, cod);
-    }
-    return head;
+    return ls_remove(head, cod);
 }
 
 /**
