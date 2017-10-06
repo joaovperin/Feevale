@@ -1,6 +1,5 @@
 /*
- * Projeto
- * CopyRight Rech Informática Ltda. Todos os direitos reservados.
+ * Projeto Lista Encadeada - Trabalho Feevale Estrutura de dados 1
  */
 #include <stdio.h>
 #include <conio.h>
@@ -15,7 +14,7 @@
  * Método auxiliar para testes
  */
 LinkedListNode* ls_insert(LinkedListNode *p, Produto prod) {
-    return ls_insertAsc(p, prod);
+    return ls_append(p, prod);
 }
 
 /**
@@ -36,6 +35,7 @@ int main() {
     head = ls_insert(head, criaProduto(700, "perin 700"));
     head = ls_insert(head, criaProduto(900, "perin 900"));
     head = ls_insert(head, criaProduto(59, "perin 59"));
+    head = ls_insert(head, criaProduto(59, "perin 59(2)"));
     head = ls_insert(head, criaProduto(800, "perin 800"));
 
     ls_printAll(head);
@@ -177,6 +177,10 @@ LinkedListNode* ls_remove(LinkedListNode *head, int cod) {
     else a->next = p->next;
     free(p -> e.descricao);
     free(p);
+    // Se ainda possuir um elemento com o mesmo código deleta-o também
+    if (ls_readKey(head, cod) != NULL) {
+        return ls_remove(head, cod);
+    }
     return head;
 }
 
@@ -247,9 +251,9 @@ Produto criaProduto(int cod, char valor[]) {
  */
 LinkedListNode* createNewListWithValues() {
     LinkedListNode* head = NULL;
-    head = ls_append(head, criaProduto(3000, "elm3000-H"));
-    head = ls_append(head, criaProduto(4000, "elm4000"));
-    head = ls_append(head, criaProduto(5000, "elm5000-F"));
+    head = ls_insert(head, criaProduto(3000, "elm3000-H"));
+    head = ls_insert(head, criaProduto(4000, "elm4000"));
+    head = ls_insert(head, criaProduto(5000, "elm5000-F"));
     return head;
 }
 
