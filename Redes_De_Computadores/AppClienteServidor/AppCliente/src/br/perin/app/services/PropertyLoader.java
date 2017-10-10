@@ -19,14 +19,10 @@ import java.util.Properties;
  */
 public class PropertyLoader {
 
-    /**
-     * Instância Singleton
-     */
+    /** Instância Singleton */
     private static PropertyLoader instance;
 
-    /**
-     * Cache de propriedades
-     */
+    /** Cache de propriedades */
     private final Properties properties;
 
     /**

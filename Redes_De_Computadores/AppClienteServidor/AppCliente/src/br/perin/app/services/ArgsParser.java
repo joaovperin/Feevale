@@ -109,7 +109,7 @@ public class ArgsParser {
      */
     private void assertOptNotNullNotEmpty(String args) {
         if (args == null || args.trim().isEmpty()) {
-            throw new RuntimeException("Opção nula ou sem valor definido: ".concat(args));
+            throw new IllegalArgumentException("Opção nula ou sem valor definido: ".concat(args));
         }
     }
 
@@ -121,7 +121,7 @@ public class ArgsParser {
     private void assertOptHasMinimumSize(String args) {
         final int minLen = 4;
         if (args.length() < minLen) {
-            throw new RuntimeException(String.format(
+            throw new IllegalArgumentException(String.format(
                     "Opção deve possuir no mínimo %1d carácteres: %s", minLen, args
             ));
         }
@@ -134,7 +134,7 @@ public class ArgsParser {
      */
     private void assertOptStartsWithLetter(String args) {
         if (!Pattern.compile("^-\\w").matcher(args).find()) {
-            throw new RuntimeException("Nome da opção deve iniciar com uma letra: ".concat(args));
+            throw new IllegalArgumentException("Nome da opção deve iniciar com uma letra: ".concat(args));
         }
     }
 
@@ -143,7 +143,7 @@ public class ArgsParser {
      */
     private void assertOptStartsWithTrace(String args) {
         if (!args.startsWith("-")) {
-            throw new RuntimeException("Opção deve iniciar com um traço '-': ".concat(args));
+            throw new IllegalArgumentException("Opção deve iniciar com um traço '-': ".concat(args));
         }
     }
 

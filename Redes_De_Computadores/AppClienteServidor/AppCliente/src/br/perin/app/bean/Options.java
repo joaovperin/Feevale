@@ -8,6 +8,7 @@ package br.perin.app.bean;
 import br.perin.app.Opt;
 import java.io.PrintStream;
 import java.math.BigDecimal;
+import java.security.InvalidParameterException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,13 +20,9 @@ import java.util.List;
  */
 public class Options {
 
-    /**
-     * Lista de opções carregadas
-     */
+    /** Lista de opções carregadas */
     private final List<Opt> options;
-    /**
-     * Tamanho do buffer
-     */
+    /** Tamanho do buffer */
     private static final int BUFF_SIZE = 512;
 
     /**
@@ -42,7 +39,7 @@ public class Options {
      */
     public void put(Opt option) {
         if (options.contains(option)) {
-            throw new RuntimeException("Opção já existe");
+            throw new InvalidParameterException("Opção já existe");
         }
         options.add(option);
     }
@@ -65,8 +62,8 @@ public class Options {
      */
     public boolean isSet(String alias) {
         String r = getProperty(alias, false);
-        return !r.trim().isEmpty()
-                && (Boolean.parseBoolean(r) || r.equalsIgnoreCase(BigDecimal.ONE.toString()));
+        return !r.trim().isEmpty() &&
+                (Boolean.parseBoolean(r) || r.equalsIgnoreCase(BigDecimal.ONE.toString()));
     }
 
     /**
@@ -116,10 +113,10 @@ public class Options {
                     findFirst().get().getValue();
         } catch (Exception e) {
             if (throwException) {
-                throw new RuntimeException("Parâmetro não encontrado: ".concat(alias));
+                throw new InvalidParameterException("Parâmetro não encontrado: ".concat(alias));
             }
         }
-        // Retorna uma String vazia para evitar problemas 
+        // Retorna uma String vazia para evitar problemas
         return new String();
     }
 

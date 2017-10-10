@@ -26,10 +26,16 @@ public class MessageParser {
         try {
             return doParse(crudeMsg);
         } catch (Exception e) {
-            throw new RuntimeException("Falha ao parsear mensagem: ".concat(crudeMsg), e);
+            throw new IllegalArgumentException("Falha ao parsear mensagem: ".concat(crudeMsg), e);
         }
     }
 
+    /**
+     * Realiza o parse da mensagem
+     *
+     * @param crudeMsg
+     * @return Message
+     */
     private Message doParse(String crudeMsg) {
         int cod = Integer.valueOf(crudeMsg.substring(0, 3));
         int size = Integer.valueOf(crudeMsg.substring(3, 6));
