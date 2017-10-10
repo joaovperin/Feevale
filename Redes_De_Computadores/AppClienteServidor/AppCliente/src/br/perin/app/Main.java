@@ -7,7 +7,7 @@ package br.perin.app;
 
 import br.perin.app.bean.Options;
 import br.perin.app.services.ArgsParser;
-import br.perin.app.Sever.ServerMock;
+import br.perin.app.server.ServerMock;
 import br.perin.app.services.PropertyLoader;
 
 /**
