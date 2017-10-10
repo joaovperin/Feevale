@@ -22,8 +22,12 @@ import java.net.UnknownHostException;
  */
 public class Client {
 
+    /** Timeout padrão */
+    private static final int DEF_SO_TIMEOUT = 5000;
+
     /** Socket da conexão com o servidor */
     private Socket socket;
+
     //
     //
     // 1-3 = cod
@@ -67,6 +71,7 @@ public class Client {
         try {
             InetAddress.getByName(address);
             socket = new Socket(address, port);
+            socket.setSoTimeout(DEF_SO_TIMEOUT);
         } catch (UnknownHostException ex) {
             throw new IOException("Host não encontrado", ex);
         }
