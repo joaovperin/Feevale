@@ -50,6 +50,9 @@ extern "C" {
     // Tamanho da descrição dos produtos
 #define PROD_DESC_LEN 30
 
+#define LS_EQUAL 1
+#define LS_NOT_EQUAL 0
+
     /**
      * Estrutura de produtos
      */
@@ -82,10 +85,12 @@ extern "C" {
     void ls_printAll(LinkedListNode *p);
     void ls_close(LinkedListNode *head);
     int ls_isEmpty(LinkedListNode *head);
+    int ls_isEqualTo(LinkedListNode *head, LinkedListNode *other);
 
     // Funções auxiliares de elementos da lista
     Produto criaProduto(int cod, char valor[]);
     void printaProduto(Produto e);
+    int isProdutoEqualTo(Produto prod, Produto other);
 
     // Funções auxiliares do programa
     LinkedListNode* createNewListWithValues();

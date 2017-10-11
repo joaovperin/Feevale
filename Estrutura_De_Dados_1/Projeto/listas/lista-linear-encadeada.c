@@ -28,24 +28,38 @@ int main() {
     LinkedListNode *head;
     head = ls_create();
 
-    ls_printAll(head);
-    putchar('\n');
+    // Declaração e inicialização do nodo inicial
+    LinkedListNode *other;
+    other = ls_create();
 
     // Inserção de alguns elementos
     head = ls_insert(head, criaProduto(700, "perin 700"));
     head = ls_insert(head, criaProduto(900, "perin 900"));
     head = ls_insert(head, criaProduto(59, "perin 59"));
-    head = ls_insert(head, criaProduto(59, "perin 59(2)"));
-    head = ls_insert(head, criaProduto(800, "perin 800"));
 
-    ls_printAll(head);
-    putchar('\n');
+    // Inserção de alguns elementos
+    other = ls_insert(other, criaProduto(700, "perin 700"));
+    other = ls_insert(other, criaProduto(900, "perin 900"));
+    other = ls_insert(other, criaProduto(59, "perin 59"));
+    printf("\nListas iguais: %1d", ls_isEqualTo(head, other));
 
-    head = ls_remove(head, 59);
+    // Adiciona um elemento na Other
+    other = ls_append(other, criaProduto(88, "perin 88"));
+    printf("\nListas iguais: %1d", ls_isEqualTo(head, other));
 
-    // Printa todos os elementos da lista
-    ls_printAll(head);
-    putchar('\n');
+    // Adiciona o mesmo elemento na Head
+    head = ls_append(other, criaProduto(88, "perin 88"));
+    printf("\nListas iguais: %1d", ls_isEqualTo(head, other));
+
+    // Remove o elemento das duas listas
+    head = ls_remove(head, 88);
+    other = ls_remove(other, 88);
+    printf("\nListas iguais: %1d", ls_isEqualTo(head, other));
+
+    // Adiciona um elemento e remove-o na Head
+    head = ls_append(other, criaProduto(222, "perin 222"));
+    head = ls_remove(head, 222);
+    printf("\nListas iguais: %1d", ls_isEqualTo(head, other));
 
     printf("\nFim.");
     return EXIT_SUCCESS;
@@ -223,6 +237,40 @@ int ls_isEmpty(LinkedListNode *head) {
         i = i -> next;
     }
     return 1;
+}
+
+/**
+ * Retorna verdadeiro se duas listas são iguais
+ */
+int ls_isEqualTo(LinkedListNode *head, LinkedListNode *other) {
+    // Se ambas as listas estiverem vazias elas são consideradas iguais
+    if (head == NULL && other == NULL) {
+        return LS_EQUAL;
+    }
+    LinkedListNode *i = head;
+    LinkedListNode *o = other;
+    while (i != NULL) {
+        // Tamanho diferente
+        if (o == NULL) return LS_NOT_EQUAL;
+        // Elemento com tamanho difernte
+        if (!isProdutoEqualTo(i -> e, o -> e)) return LS_NOT_EQUAL;
+        // Incrementa os ponteiros
+        i = i -> next;
+        o = o -> next;
+    }
+    // Tamanho diferente
+    if (o != NULL) return LS_NOT_EQUAL;
+    // São iguais
+    return LS_EQUAL;
+}
+
+/**
+ * Retorna verdadeiro se dois produtos forem iguais
+ */
+int isProdutoEqualTo(Produto prod, Produto other) {
+    if (prod.codigo != other.codigo) return LS_NOT_EQUAL;
+    if (strcmp(prod.descricao, other.descricao) != 0) return LS_NOT_EQUAL;
+    return LS_EQUAL;
 }
 
 /**
