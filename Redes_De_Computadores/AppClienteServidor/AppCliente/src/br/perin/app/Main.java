@@ -23,9 +23,26 @@ public class Main {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        System.out.println("Cliente não implementado!! Alternando para método de testes...:");
+        // Carrega propriedades necessárias
+        loadApplicationProperties(args);
+        // Inicia a comnicação através do cliente
+        Client cl = new ProfessorClient();
+        ProfessorClient.realizaComunicacao(cl);
+    }
+
+    /**
+     * Carrega todas as opções e propriedades necessárias
+     *
+     * @param args
+     */
+    private static void loadApplicationProperties(String[] args) {
+        args = new String[]{"-d=C:\\Users\\Joaov\\Documents\\app.properties"};
+        // Carrega os argumentos de linha de comando
+        Options options = ArgsParser.get().parse(args);
+        // Carrega propriedades através do diretório passado e printa opções
+        PropertyLoader.get().load(options.getString("d"));
+        PropertyLoader.get().printAll(System.out);
         System.out.println();
-        doTests(args);
     }
 
     /**
@@ -34,7 +51,7 @@ public class Main {
      * @param args
      */
     private static void doTests(String[] args) {
-        args = new String[] { "-d=C:\\Users\\0199831\\Perin\\a\\app.properties", "-r=client" };
+        args = new String[]{"-d=C:\\Users\\Joaov\\Documents\\app.properties", "-r=client"};
         // Carrega os argumentos de linha de comando
         Options options = ArgsParser.get().parse(args);
         // Busca o valor do diretório passado

@@ -20,45 +20,43 @@ import java.net.UnknownHostException;
  *
  * @author Joaov
  */
-public class Client {
+public abstract class Client {
 
     /** Timeout padrão */
-    private static final int DEF_SO_TIMEOUT = 5000;
+    private static final int DEF_SO_TIMEOUT = 2000;
 
     /** Socket da conexão com o servidor */
     private Socket socket;
 
-    //
-    //
-    // 1-3 = cod
-    // 4-7 = tamanho
-    // 8-2000 = msg
-    //
-    //
     /**
      * Envia uma mensagem para o servidor
      *
      * @param msg Mensagem a enviar
      * @return String Resposta
      */
-    public String sendMessage(String msg) {
+    public final String sendMessage(String msg) {
         String retorno;
         try {
             connect();
-            retorno = send(msg);
+            retorno = send(transform(msg));
             closeConn();
         } catch (IOException e) {
-            retorno = "NOTOK";
+            String m = "Falha na comunicação. Motivo: ".concat(e.getMessage());
+            retorno = String.format("000%d%s", m.length(), m);
         }
         return retorno;
     }
 
     /**
      * Realiza a conexão
+     *
+     * @throws java.io.IOException
      */
-    private void connect() throws IOException {
+    protected final void connect() throws IOException {
         PropertyLoader pt = PropertyLoader.get();
-        connect(pt.getString("host", "localhost"), pt.getInt("port", 6969));
+        connect(pt.getString("host", "localhost"),
+                pt.getInt("port", 6969),
+                pt.getInt("timeout", DEF_SO_TIMEOUT));
     }
 
     /**
@@ -66,12 +64,14 @@ public class Client {
      *
      * @param address
      * @param port
+     * @param timeout
+     * @throws java.io.IOException
      */
-    private void connect(String address, int port) throws IOException {
+    protected final void connect(String address, int port, int timeout) throws IOException {
         try {
             InetAddress.getByName(address);
             socket = new Socket(address, port);
-            socket.setSoTimeout(DEF_SO_TIMEOUT);
+            socket.setSoTimeout(timeout);
         } catch (UnknownHostException ex) {
             throw new IOException("Host não encontrado", ex);
         }
@@ -82,8 +82,9 @@ public class Client {
      *
      * @param msg
      * @return String
+     * @throws java.io.IOException
      */
-    private String send(String msg) throws IOException {
+    protected final String send(String msg) throws IOException {
         // Se não estiver conectado
         if (socket == null || !socket.isConnected()) {
             throw new IOException("Não vai rolar.");
@@ -109,6 +110,16 @@ public class Client {
             throw new IOException("Falha ao fechar a conexão");
         }
         socket = null;
+    }
+
+    /**
+     * Transforma a mensagem antes de enviar
+     *
+     * @param crudeMsg
+     * @return String
+     */
+    protected String transform(String crudeMsg) {
+        return crudeMsg;
     }
 
 }
