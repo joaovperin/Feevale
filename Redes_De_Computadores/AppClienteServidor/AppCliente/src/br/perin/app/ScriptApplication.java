@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.perin.app;
 
 import br.perin.app.inject.App;
@@ -45,7 +40,8 @@ public class ScriptApplication {
         try (FileReader fr = new FileReader(new File(scriptFile))) {
             engine.eval(fr);
         } catch (IOException e) {
-            throw new ScriptException("Falha ao ler Script do arquivo: ".concat(scriptFile) + ".");
+            throw new ScriptException("Falha ao ler Script do arquivo: ".
+                    concat(scriptFile) + ".");
         }
         System.out.println("[SV]End.");
     }
@@ -67,7 +63,8 @@ public class ScriptApplication {
      */
     private static synchronized void instantiate() {
         if (instance == null) {
-            ScriptEngine e = new NashornScriptEngineFactory().getScriptEngine();
+            ScriptEngine e = new NashornScriptEngineFactory().
+                    getScriptEngine();
             e.put("app", new App());
             e.put("client", new Client());
             instance = new ScriptApplication(e);

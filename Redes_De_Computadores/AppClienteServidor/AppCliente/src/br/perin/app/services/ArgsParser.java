@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.perin.app.services;
 
 import br.perin.app.bean.Opt;
@@ -57,7 +52,8 @@ public class ArgsParser {
      * @return Opt
      */
     private Opt parseBooleanOpt(String key) {
-        return new Opt(getKey(key, key.length()), String.valueOf(Boolean.TRUE.booleanValue()));
+        return new Opt(getKey(key, key.length()),
+                String.valueOf(Boolean.TRUE.booleanValue()));
     }
 
     /**
@@ -109,7 +105,8 @@ public class ArgsParser {
      */
     private void assertOptNotNullNotEmpty(String args) {
         if (args == null || args.trim().isEmpty()) {
-            throw new IllegalArgumentException("Opção nula ou sem valor definido: ".concat(args));
+            throw new IllegalArgumentException("Opção nula ou sem valor "
+                    + "definido: ".concat(args));
         }
     }
 
@@ -122,7 +119,8 @@ public class ArgsParser {
         final int minLen = 4;
         if (args.length() < minLen) {
             throw new IllegalArgumentException(String.format(
-                    "Opção deve possuir no mínimo %1d carácteres: %s", minLen, args
+                    "Opção deve possuir no mínimo %1d carácteres: %s",
+                    minLen, args
             ));
         }
     }
@@ -134,7 +132,8 @@ public class ArgsParser {
      */
     private void assertOptStartsWithLetter(String args) {
         if (!Pattern.compile("^-\\w").matcher(args).find()) {
-            throw new IllegalArgumentException("Nome da opção deve iniciar com uma letra: ".concat(args));
+            throw new IllegalArgumentException("Nome da opção deve "
+                    + "iniciar com uma letra: ".concat(args));
         }
     }
 
@@ -143,7 +142,8 @@ public class ArgsParser {
      */
     private void assertOptStartsWithTrace(String args) {
         if (!args.startsWith("-")) {
-            throw new IllegalArgumentException("Opção deve iniciar com um traço '-': ".concat(args));
+            throw new IllegalArgumentException("Opção deve iniciar com "
+                    + "um traço '-': ".concat(args));
         }
     }
 
@@ -154,17 +154,22 @@ public class ArgsParser {
      */
     public final String getHelp() {
         StringBuilder sb = new StringBuilder(1024);
-        sb.append("É necessário informar via linha de comando o diretório para o arquivo de propriedades!").append('\n');
-        sb.append("Ex.:").append("java -jar AppCliente.jar -d=C:\\tmp\\app.properties").append('\n').append('\n');
+        sb.append("É necessário informar via linha de comando o diretório"
+                + " para o arquivo de propriedades!").append('\n');
+        sb.append("Ex.:").append("java -jar AppCliente.jar "
+                + "-d=C:\\tmp\\app.properties").append('\n').append('\n');
         sb.append("************************").append('\n');
         sb.append("* Propriedades válidas *").append('\n');
         sb.append("************************").append('\n').append('\n');
         sb.append("# host: ").append("Endereço do servidor").append('\n');
         sb.append("# port: ").append("Porta do servidor").append('\n');
-        sb.append("# timeout: ").append("Tempo máximo de resposta do servidor (em ms)").append('\n');
+        sb.append("# timeout: ").append("Tempo máximo de resposta "
+                + "do servidor (em ms)").append('\n');
         sb.append(" Se não informado, assume o default 500ms.").append('\n');
-        sb.append("# script: ").append("Localização do script de comunicação.").append('\n');
-        sb.append(" Se não informado, busca o arquivo script.js na pasta do JAR.").append('\n');
+        sb.append("# script: ").append("Localização do script de "
+                + "comunicação.").append('\n');
+        sb.append(" Se não informado, busca o arquivo script.js na pasta "
+                + "do JAR.").append('\n');
         return sb.toString();
     }
 

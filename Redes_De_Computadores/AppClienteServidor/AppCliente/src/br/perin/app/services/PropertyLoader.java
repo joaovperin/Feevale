@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.perin.app.services;
 
 import java.io.FileInputStream;
@@ -42,18 +37,21 @@ public class PropertyLoader {
             InputStream f = new FileInputStream(dir);
             properties.load(f);
             if (properties.isEmpty()) {
-                System.out.println(getNoPropertyLoadedMessage("Arquivo de propriedades vazio."));
+                System.out.println(getNoPropertyLoadedMessage("Arquivo de "
+                        + "propriedades vazio."));
             }
         } catch (FileNotFoundException ex) {
-            System.out.println(getNoPropertyLoadedMessage("Arquivo não encontrado."));
+            System.out.println(getNoPropertyLoadedMessage("Arquivo não "
+                    + "encontrado."));
         } catch (IOException ex) {
-            System.out.println(getNoPropertyLoadedMessage("Falha na leitura do arquivo."));
+            System.out.println(getNoPropertyLoadedMessage("Falha na leitura "
+                    + "do arquivo."));
         }
     }
 
     /**
-     * Retorna mensagem default de nenhuma propriedade carregada concatenando a
-     * causa
+     * Retorna mensagem default de nenhuma propriedade carregada concatenando
+     * a causa
      *
      * @param cause
      * @return String
@@ -81,7 +79,8 @@ public class PropertyLoader {
      * @return int
      */
     public int getInt(String key, int def) {
-        return Integer.valueOf(getProperties().getProperty(key, String.valueOf(def)));
+        return Integer.valueOf(getProperties().getProperty(key,
+                String.valueOf(def)));
     }
 
     /**

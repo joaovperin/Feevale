@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.perin.app;
 
 import br.perin.app.bean.Options;
@@ -38,13 +33,14 @@ public class Main {
     /**
      * Retorna o arquivo do Script
      *
-     * @param ptScript
+     * @param ppt Propriedade do script
      * @return String
      */
-    private static String getScriptFile(String ptScript) {
-        final String defScript = new File("script.js").getAbsoluteFile().toString();
-        String scriptFile = PropertyLoader.get().getString(ptScript, defScript);
-        return "".equals(scriptFile.trim()) ? defScript : scriptFile;
+    private static String getScriptFile(String ppt) {
+        final String def = new File("script.js").
+                getAbsoluteFile().toString();
+        String scriptFile = PropertyLoader.get().getString(ppt, def);
+        return "".equals(scriptFile.trim()) ? def : scriptFile;
     }
 
     /**
@@ -60,7 +56,8 @@ public class Main {
         // Carrega os argumentos de linha de comando
         Options options = ArgsParser.get().parse(args);
         if (!options.isPresent("d")) {
-            throw new RuntimeException("É necessário informar o diretório do arquivo de propriedades.");
+            throw new RuntimeException("É necessário informar o diretório "
+                    + "do arquivo de propriedades.");
         }
         // Carrega propriedades através do diretório passado e printa opções
         PropertyLoader.get().load(options.getString("d"));

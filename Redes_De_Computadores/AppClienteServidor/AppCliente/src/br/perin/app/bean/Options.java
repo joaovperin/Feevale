@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.perin.app.bean;
 
 import java.io.PrintStream;
@@ -55,7 +50,7 @@ public class Options {
 
     /**
      * Retorna verdadeiro se uma opção foi carregada
-     * 
+     *
      * @param alias
      * @return boolean
      */
@@ -72,7 +67,8 @@ public class Options {
     public boolean isSet(String alias) {
         String r = getProperty(alias, false);
         return r != null && !r.trim().isEmpty()
-                && (Boolean.parseBoolean(r) || r.equalsIgnoreCase(BigDecimal.ONE.toString()));
+                && (Boolean.parseBoolean(r)
+                || r.equalsIgnoreCase(BigDecimal.ONE.toString()));
     }
 
     /**
@@ -118,14 +114,15 @@ public class Options {
      */
     private String getProperty(String alias, boolean throwException) {
         try {
-            return options.stream().filter((o) -> o.getAlias().equals(alias)).
-                    findFirst().get().getValue();
+            return options.stream().filter((o) -> o.getAlias().
+                    equals(alias)).findFirst().get().getValue();
         } catch (Exception e) {
             if (throwException) {
-                throw new InvalidParameterException("Parâmetro não encontrado: ".concat(alias));
+                throw new InvalidParameterException("Parâmetro não "
+                        + "encontrado: ".concat(alias));
             }
         }
-        // Retorna null caso não deve levantar exceção e não encontrou a opção
+        // Retorna null se não levanta exceção e não encontrou a opção
         return null;
     }
 

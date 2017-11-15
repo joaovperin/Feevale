@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package br.perin.app.inject;
 
 import br.perin.app.services.PropertyLoader;
@@ -16,9 +11,8 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 /**
- * Classe que representa um Client, responsável por se comunicar com um servidor
- *
- * O pacote inject agrupa classes injetadas no script.
+ * Classe que representa um Client, responsável por se comunicar com um
+ * servidor.
  *
  * @author Joaov
  */
@@ -43,7 +37,8 @@ public class Client {
             retorno = send(transform(msg));
             closeConn();
         } catch (IOException e) {
-            String m = "Falha na comunicação. Motivo: ".concat(e.getMessage());
+            String m = "Falha na comunicação. Motivo: ".concat(
+                    e.getMessage());
             retorno = String.format("000%d%s", m.length(), m);
         }
         return retorno;
@@ -69,7 +64,8 @@ public class Client {
      * @param timeout
      * @throws java.io.IOException
      */
-    protected final void connect(String address, int port, int timeout) throws IOException {
+    protected final void connect(String address, int port, int timeout)
+            throws IOException {
         try {
             InetAddress.getByName(address);
             socket = new Socket(address, port);
@@ -92,12 +88,14 @@ public class Client {
             throw new IOException("Não vai rolar.");
         }
         // Envia a mensagem para o servidor
-        try (BufferedWriter out = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()))) {
+        try (BufferedWriter out = new BufferedWriter(
+                new OutputStreamWriter(socket.getOutputStream()))) {
             out.write(msg);
             out.flush();
             socket.shutdownOutput();
             // Recebe a resposta do servidor
-            try (BufferedReader in = new BufferedReader(new InputStreamReader(socket.getInputStream()))) {
+            try (BufferedReader in = new BufferedReader(
+                    new InputStreamReader(socket.getInputStream()))) {
                 return in.readLine();
             }
         }
