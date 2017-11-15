@@ -5,6 +5,7 @@
  */
 package br.perin.app;
 
+import br.perin.app.bean.Opt;
 import br.perin.app.bean.Options;
 import br.perin.app.services.ArgsParser;
 import static org.junit.Assert.assertEquals;

@@ -5,7 +5,6 @@
  */
 package br.perin.app.bean;
 
-import br.perin.app.Opt;
 import java.io.PrintStream;
 import java.math.BigDecimal;
 import java.security.InvalidParameterException;
@@ -14,7 +13,7 @@ import java.util.Collections;
 import java.util.List;
 
 /**
- * Classe Options
+ * Classe responsável por encapsular e manipular opções carregadas
  *
  * @author Joaov
  */
@@ -55,15 +54,25 @@ public class Options {
     }
 
     /**
-     * Retorna o valor de uma opção carregada buscando pelo alias
+     * Retorna verdadeiro se uma opção foi carregada
+     * 
+     * @param alias
+     * @return boolean
+     */
+    public boolean isPresent(String alias) {
+        return getProperty(alias, false) != null;
+    }
+
+    /**
+     * Retorna o valor de uma opção booleana carregada buscando pelo alias
      *
      * @param alias
      * @return String
      */
     public boolean isSet(String alias) {
         String r = getProperty(alias, false);
-        return !r.trim().isEmpty() &&
-                (Boolean.parseBoolean(r) || r.equalsIgnoreCase(BigDecimal.ONE.toString()));
+        return r != null && !r.trim().isEmpty()
+                && (Boolean.parseBoolean(r) || r.equalsIgnoreCase(BigDecimal.ONE.toString()));
     }
 
     /**
@@ -116,8 +125,8 @@ public class Options {
                 throw new InvalidParameterException("Parâmetro não encontrado: ".concat(alias));
             }
         }
-        // Retorna uma String vazia para evitar problemas
-        return new String();
+        // Retorna null caso não deve levantar exceção e não encontrou a opção
+        return null;
     }
 
 }

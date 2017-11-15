@@ -5,12 +5,12 @@
  */
 package br.perin.app.services;
 
-import br.perin.app.Opt;
+import br.perin.app.bean.Opt;
 import br.perin.app.bean.Options;
 import java.util.regex.Pattern;
 
 /**
- * Classe ArgsParser
+ * Classe responsável por realizar o parse de argumentos de linha de comando
  *
  * @author Joaov
  */
@@ -145,6 +145,27 @@ public class ArgsParser {
         if (!args.startsWith("-")) {
             throw new IllegalArgumentException("Opção deve iniciar com um traço '-': ".concat(args));
         }
+    }
+
+    /**
+     * Cria o e retorna o Help
+     *
+     * @return String
+     */
+    public final String getHelp() {
+        StringBuilder sb = new StringBuilder(1024);
+        sb.append("É necessário informar via linha de comando o diretório para o arquivo de propriedades!").append('\n');
+        sb.append("Ex.:").append("java -jar AppCliente.jar -d=C:\\tmp\\app.properties").append('\n').append('\n');
+        sb.append("************************").append('\n');
+        sb.append("* Propriedades válidas *").append('\n');
+        sb.append("************************").append('\n').append('\n');
+        sb.append("# host: ").append("Endereço do servidor").append('\n');
+        sb.append("# port: ").append("Porta do servidor").append('\n');
+        sb.append("# timeout: ").append("Tempo máximo de resposta do servidor (em ms)").append('\n');
+        sb.append(" Se não informado, assume o default 500ms.").append('\n');
+        sb.append("# script: ").append("Localização do script de comunicação.").append('\n');
+        sb.append(" Se não informado, busca o arquivo script.js na pasta do JAR.").append('\n');
+        return sb.toString();
     }
 
 }

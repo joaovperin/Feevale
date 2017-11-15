@@ -13,7 +13,7 @@ import java.io.PrintStream;
 import java.util.Properties;
 
 /**
- * Classe PropertyLoader
+ * Classe responsável pela carga de propriedades
  *
  * @author Joaov
  */
@@ -60,6 +60,16 @@ public class PropertyLoader {
      */
     private String getNoPropertyLoadedMessage(String cause) {
         return "Nenhuma propriedade foi carregada! Motivo: ".concat(cause);
+    }
+
+    /**
+     * Retorna verdadeiro se uma propriedade existe
+     *
+     * @param key
+     * @return boolean
+     */
+    public boolean isPresent(String key) {
+        return getProperties().getProperty(key) != null;
     }
 
     /**

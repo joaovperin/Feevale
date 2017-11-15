@@ -3,7 +3,7 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
-package br.perin.app;
+package br.perin.app.inject;
 
 import br.perin.app.services.PropertyLoader;
 import java.io.BufferedReader;
@@ -16,11 +16,13 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 
 /**
- * Classe Client
+ * Classe que representa um Client, responsável por se comunicar com um servidor
+ *
+ * O pacote inject agrupa classes injetadas no script.
  *
  * @author Joaov
  */
-public abstract class Client {
+public class Client {
 
     /** Timeout padrão */
     private static final int DEF_SO_TIMEOUT = 2000;

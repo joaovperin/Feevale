@@ -8,7 +8,8 @@ package br.perin.app;
 import br.perin.app.bean.Options;
 import br.perin.app.services.ArgsParser;
 import br.perin.app.services.PropertyLoader;
-import br.perin.app.services.Tester;
+import java.io.File;
+import javax.script.ScriptException;
 
 /**
  * Classe principal da aplicação cliente
@@ -25,9 +26,25 @@ public class Main {
     public static void main(String[] args) {
         // Carrega propriedades necessárias
         loadApplicationProperties(args);
-        // Inicia a comnicação através do cliente
-        Client cl = new ProfessorClient();
-        ProfessorClient.realizaComunicacao(cl);
+        // Se deve rodar com Script
+        final String ptScript = "script";
+        if (PropertyLoader.get().isPresent(ptScript)) {
+            startScriptApplication(getScriptFile(ptScript));
+        } else {
+            startHardCodedApplication();
+        }
+    }
+
+    /**
+     * Retorna o arquivo do Script
+     *
+     * @param ptScript
+     * @return String
+     */
+    private static String getScriptFile(String ptScript) {
+        final String defScript = new File("script.js").getAbsoluteFile().toString();
+        String scriptFile = PropertyLoader.get().getString(ptScript, defScript);
+        return "".equals(scriptFile.trim()) ? defScript : scriptFile;
     }
 
     /**
@@ -36,9 +53,15 @@ public class Main {
      * @param args
      */
     private static void loadApplicationProperties(String[] args) {
-        args = new String[]{"-d=C:\\Users\\Joaov\\Documents\\app.properties"};
+        // Se não informou parâmetros de entrada, printa a linha de ajuda
+        if (args == null || args.length <= 0 || args[0] == null) {
+            throw new RuntimeException(ArgsParser.get().getHelp());
+        }
         // Carrega os argumentos de linha de comando
         Options options = ArgsParser.get().parse(args);
+        if (!options.isPresent("d")) {
+            throw new RuntimeException("É necessário informar o diretório do arquivo de propriedades.");
+        }
         // Carrega propriedades através do diretório passado e printa opções
         PropertyLoader.get().load(options.getString("d"));
         PropertyLoader.get().printAll(System.out);
@@ -46,24 +69,22 @@ public class Main {
     }
 
     /**
-     * Entry point de testes
-     *
-     * @param args
+     * Inicializa aplicação de Script
      */
-    private static void doTests(String[] args) {
-        args = new String[]{"-d=C:\\Users\\Joaov\\Documents\\app.properties", "-r=client"};
-        // Carrega os argumentos de linha de comando
-        Options options = ArgsParser.get().parse(args);
-        // Busca o valor do diretório passado
-        String propsDir = options.getString("d");
-        PropertyLoader.get().load(propsDir);
-        // Printa todas as opções e propriedades carregadas
-        options.printAll(System.out);
-        System.out.println();
-        PropertyLoader.get().printAll(System.out);
-        // Roda a aplicação de acordo com o parâmetro recebido
-        String run = options.getString("r");
-        new Tester().run(run);
+    private static void startScriptApplication(String file) {
+        try {
+            ScriptApplication.get().start(file);
+        } catch (ScriptException e) {
+            System.out.println("Ocorreu um problema na Script Engine.");
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
+     * Inicializa aplicação de HardCoded
+     */
+    private static void startHardCodedApplication() {
+        HardCodedApplication.get().start();
     }
 
 }
