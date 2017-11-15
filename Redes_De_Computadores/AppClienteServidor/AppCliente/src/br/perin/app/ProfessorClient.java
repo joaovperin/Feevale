@@ -23,7 +23,7 @@ public class ProfessorClient extends Client {
         // Se comunicou com sucesso:
         if (ret.startsWith("101")) {
             // Solicita mensagem do dia
-            cl.sendMessage("2000000");
+            System.out.println(cl.sendMessage("2000000"));
         } else if (ret.startsWith("102")) {
             System.out.println("Retorno 102 -> O servidor está ocupado.");
         } else {
