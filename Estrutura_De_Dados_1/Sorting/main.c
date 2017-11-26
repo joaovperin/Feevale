@@ -13,18 +13,20 @@
 
 #include <stdio.h>
 #include <stdlib.h>
+#include <limits.h>
 #include "Default.h"
 
 /** Tamanho do array */
-#define ARR_SIZE 5
-#define NEW_ARR {3, 1, 5, 7, 4} /*5*/
-//#define NEW_ARR {3, 0, 1, 8, 7, 2, 5, 4, 9, 6, 2} /*11*/
+#define ARR_SIZE 10
+#define NEW_ARR {3, 0, 1, 8, 7, 2, 5, 4, 9, 6}
 
 void bubbleSort(int arr[], int arraySize);
 void selectionSort(int arr[], int arraySize);
 void insertionSort(int arr[], int arraySize);
-
 void mergeSort(int arr[], int arraySize);
+
+void mergeSort_merge(int arr[], int p, int q, int r);
+void mergeSort_ms(int arr[], int p, int r);
 
 // Função auxiliar para trocar os valores de 2 posições do array
 void swapValue(int *arr, int idxA, int idxB);
@@ -41,33 +43,12 @@ int main(int argc, char** argv) {
     printaArray(arr, ARR_SIZE);
 
     mergeSort(arr, ARR_SIZE);
-    //    selectionSort(arr, ARR_SIZE);
-    //    insertionSort(arr, ARR_SIZE);
-    //    bubbleSort(arr, ARR_SIZE);
 
     printf("\nDepois:\n");
     printaArray(arr, ARR_SIZE);
 
-
-
     printf("\n");
     return (EXIT_SUCCESS);
-}
-
-void mergeSort(int arr[], int arraySize) {
-    if (arraySize <= 1) return;
-    // Metade do array
-    int half = arraySize / 2;
-    // Dois subarrays
-    int a1[half];
-    int a2[half];
-    // Inicializa os subarrays
-    for (int i = 0; i < half; i++) a1[i] = arr[i];
-    for (int i = half; i < arraySize; i++) a2[i] = arr[i];
-    // Realiza o sort nos 2 arrays
-    mergeSort(a1);
-    mergeSort(a2);
-
 }
 
 /**
@@ -86,6 +67,12 @@ void bubbleSort(int arr[], int arraySize) {
     }
 }
 
+/**
+ * Selection Sort :D
+ * 
+ * @param arr
+ * @param arraySize
+ */
 void selectionSort(int arr[], int arraySize) {
     // Percorre o array do início guardando a posição inicial não ordenada
     for (int i = 0; i < arraySize; i++) {
@@ -117,6 +104,56 @@ void insertionSort(int arr[], int arraySize) {
                 swapValue(arr, k, k - 1);
             }
         }
+    }
+}
+
+/**
+ * Merge Sort :D
+ * 
+ * @param arr
+ * @param arraySize
+ */
+void mergeSort(int arr[], int arraySize) {
+    mergeSort_ms(arr, 0, arraySize);
+}
+
+/**
+ * Merge Sort - Função principal, recursiva (divide)
+ * 
+ * @param arr
+ * @param arraySize
+ */
+void mergeSort_ms(int arr[], int p, int r) {
+    // Se o tamanho for 1, já está ordenado
+    if (p >= r) return;
+    int half = (p + r) / 2;
+    // Ordena recursivamente os subarrays
+    mergeSort_ms(arr, p, half);
+    mergeSort_ms(arr, half + 1, r);
+    // Ordena o array principal realizando o merge
+    mergeSort_merge(arr, p, half, r);
+}
+
+/**
+ * Merge Sort - Função merge (conquer)
+ * 
+ * @param arr
+ * @param arraySize
+ */
+void mergeSort_merge(int arr[], int p, int q, int r) {
+    // Cria 2 subarrays para a esquerda e direita do array principal
+    int leftSize = (q - p + 1), rightSize = (r - q);
+    int left[leftSize + 1], right[rightSize + 1];
+    // Inicializa os subarrays
+    for (int idx = 0; idx <= leftSize; idx++) left[idx] = *(arr + p + idx - 1);
+    for (int idx = 0; idx <= rightSize; idx++) right[idx] = *(arr + q + idx);
+    left[leftSize + 1] = INT_MAX;
+    right[rightSize + 1] = INT_MAX;
+    // Realiza o merge dos subarrays no array principal
+    int i = 1, j = 1;
+    for (int idx = p; idx <= r; idx++) {
+        if (left[i] <= right[j]) *(arr + idx) = left[i++];
+        else *(arr + idx) = right[j++];
     }
 }
 
