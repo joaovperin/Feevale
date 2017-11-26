@@ -30,11 +30,24 @@ void mergeSort_ms(int arr[], int p, int r);
 
 // Função auxiliar para trocar os valores de 2 posições do array
 void swapValue(int *arr, int idxA, int idxB);
+// Funções auxiliares para controle de tempo
+void timerOn();
+void timerOff();
+
+#define OPT_BUBBLE '1'
+#define OPT_SELECTION '2'
+#define OPT_INSERTION '3'
+#define OPT_MERGE '4'
 
 /*
  * Main Entry point
  */
 int main(int argc, char** argv) {
+    // Opção Default = Bubble
+    char opt = OPT_BUBBLE;
+    if (argc == 2) {
+        opt = (char) *(argv + 1)[0];
+    }
 
     /** Array inicial */
     int arr[ARR_SIZE] = NEW_ARR;
@@ -42,7 +55,31 @@ int main(int argc, char** argv) {
     printf("Antes:\n");
     printaArray(arr, ARR_SIZE);
 
-    mergeSort(arr, ARR_SIZE);
+
+    timerOn();
+    // Avalia a opção escolhida
+    switch (opt) {
+        case OPT_BUBBLE:
+            printf("\nBubble Sort");
+            bubbleSort(arr, ARR_SIZE);
+            break;
+        case OPT_SELECTION:
+            printf("\nSelection Sort");
+            selectionSort(arr, ARR_SIZE);
+            break;
+        case OPT_INSERTION:
+            printf("\nInsertion Sort");
+            insertionSort(arr, ARR_SIZE);
+            break;
+        case OPT_MERGE:
+            printf("\nMerge Sort");
+            mergeSort(arr, ARR_SIZE);
+            break;
+        default:
+            printf("Opção não reconhecida.\n");
+            break;
+    }
+    timerOff();
 
     printf("\nDepois:\n");
     printaArray(arr, ARR_SIZE);
@@ -164,4 +201,10 @@ void swapValue(int *arr, int idxA, int idxB) {
     int temp = *(arr + idxA);
     *(arr + idxA) = *(arr + idxB);
     *(arr + idxB) = temp;
+}
+
+void timerOn() {
+}
+
+void timerOff() {
 }
