@@ -14,11 +14,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <limits.h>
+#include <time.h>
 #include "Default.h"
 
 /** Tamanho do array */
-#define ARR_SIZE 10
-#define NEW_ARR {3, 0, 1, 8, 7, 2, 5, 4, 9, 6}
+#define MAX_ARR_SIZE 25000
+#define PRINT 0
 
 void bubbleSort(int arr[], int arraySize);
 void selectionSort(int arr[], int arraySize);
@@ -30,9 +31,13 @@ void mergeSort_ms(int arr[], int p, int r);
 
 // Função auxiliar para trocar os valores de 2 posições do array
 void swapValue(int *arr, int idxA, int idxB);
+
 // Funções auxiliares para controle de tempo
 void timerOn();
 void timerOff();
+void timerPrint();
+// Instâncias globais do clock para controle de benchmarking
+clock_t clockStart, clockEnd;
 
 #define OPT_BUBBLE '1'
 #define OPT_SELECTION '2'
@@ -45,35 +50,41 @@ void timerOff();
 int main(int argc, char** argv) {
     // Opção Default = Bubble
     char opt = OPT_BUBBLE;
+    // Se recebeu por linha de comando, atribui a opção
     if (argc == 2) {
         opt = (char) *(argv + 1)[0];
     }
 
     /** Array inicial */
-    int arr[ARR_SIZE] = NEW_ARR;
+    int arr[MAX_ARR_SIZE];
+    int arraySize = sizeof (arr) / sizeof (int);
+    // Inicializa gerador de aleatórios
+    srand(time(NULL));
+    for (int i = 0; i < arraySize; i++) arr[i] = rand() % 1000;
 
-    printf("Antes:\n");
-    printaArray(arr, ARR_SIZE);
-
+    if (PRINT) {
+        printf("Antes:\n");
+        printaArray(arr, arraySize);
+    }
 
     timerOn();
     // Avalia a opção escolhida
     switch (opt) {
         case OPT_BUBBLE:
             printf("\nBubble Sort");
-            bubbleSort(arr, ARR_SIZE);
+            bubbleSort(arr, arraySize);
             break;
         case OPT_SELECTION:
             printf("\nSelection Sort");
-            selectionSort(arr, ARR_SIZE);
+            selectionSort(arr, arraySize);
             break;
         case OPT_INSERTION:
             printf("\nInsertion Sort");
-            insertionSort(arr, ARR_SIZE);
+            insertionSort(arr, arraySize);
             break;
         case OPT_MERGE:
             printf("\nMerge Sort");
-            mergeSort(arr, ARR_SIZE);
+            mergeSort(arr, arraySize);
             break;
         default:
             printf("Opção não reconhecida.\n");
@@ -81,8 +92,11 @@ int main(int argc, char** argv) {
     }
     timerOff();
 
-    printf("\nDepois:\n");
-    printaArray(arr, ARR_SIZE);
+    if (PRINT) {
+        printf("\nDepois:\n");
+        printaArray(arr, arraySize);
+    }
+    timerPrint();
 
     printf("\n");
     return (EXIT_SUCCESS);
@@ -204,7 +218,13 @@ void swapValue(int *arr, int idxA, int idxB) {
 }
 
 void timerOn() {
+    clockStart = clock();
 }
 
 void timerOff() {
+    clockEnd = clock();
+}
+
+void timerPrint() {
+    printf("\nTempo decorrido: %dms", (clockEnd - clockStart) / (CLOCKS_PER_SEC / 1000));
 }
