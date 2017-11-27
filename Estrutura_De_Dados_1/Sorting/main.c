@@ -4,7 +4,7 @@
  * and open the template in the editor.
  */
 
-/* 
+/*
  * File:   main.c
  * Author: Joaov
  *
@@ -18,7 +18,6 @@
 #include "Default.h"
 
 /** Tamanho do array */
-#define MAX_ARR_SIZE 25000
 #define PRINT 0
 
 void bubbleSort(int arr[], int arraySize);
@@ -44,6 +43,32 @@ clock_t clockStart, clockEnd;
 #define OPT_INSERTION '3'
 #define OPT_MERGE '4'
 
+#define SIZE_1 1000
+#define SIZE_2 50000
+#define SIZE_3 100000
+#define SIZE_4 200000
+
+int ArrayStartSize = SIZE_1;
+
+char showMenu() {
+    char tmp = '\0';
+
+    printf("\n ***********:");
+    printf("\n * 0-Sair");
+    printf("\n * 1-%6d", SIZE_1);
+    printf("\n * 2-%6d", SIZE_2);
+    printf("\n * 3-%6d", SIZE_3);
+    printf("\n * 4-%6d", SIZE_4);
+    printf("\n ***********:");
+
+    do {
+        printf("\nEscolha: ");
+        scanf("%c", &tmp);
+    } while (tmp != '1' && tmp != '2' && tmp != '3' && tmp != '4' && tmp != '0');
+
+    return tmp;
+}
+
 /*
  * Main Entry point
  */
@@ -53,10 +78,12 @@ int main(int argc, char** argv) {
     // Se recebeu por linha de comando, atribui a opção
     if (argc == 2) {
         opt = (char) *(argv + 1)[0];
+    } else {
+        opt = showMenu();
     }
 
     /** Array inicial */
-    int arr[MAX_ARR_SIZE];
+    int arr[ArrayStartSize];
     int arraySize = sizeof (arr) / sizeof (int);
     // Inicializa gerador de aleatórios
     srand(time(NULL));
@@ -66,6 +93,9 @@ int main(int argc, char** argv) {
         printf("Antes:\n");
         printaArray(arr, arraySize);
     }
+
+
+
 
     timerOn();
     // Avalia a opção escolhida
@@ -104,7 +134,7 @@ int main(int argc, char** argv) {
 
 /**
  * Bubble Sort :D
- * 
+ *
  * @param arr
  * @param arraySize
  */
@@ -120,7 +150,7 @@ void bubbleSort(int arr[], int arraySize) {
 
 /**
  * Selection Sort :D
- * 
+ *
  * @param arr
  * @param arraySize
  */
@@ -141,7 +171,7 @@ void selectionSort(int arr[], int arraySize) {
 
 /**
  * Insertion Sort :D
- * 
+ *
  * @param arr
  * @param arraySize
  */
@@ -160,7 +190,7 @@ void insertionSort(int arr[], int arraySize) {
 
 /**
  * Merge Sort :D
- * 
+ *
  * @param arr
  * @param arraySize
  */
@@ -170,7 +200,7 @@ void mergeSort(int arr[], int arraySize) {
 
 /**
  * Merge Sort - Função principal, recursiva (divide)
- * 
+ *
  * @param arr
  * @param arraySize
  */
@@ -187,7 +217,7 @@ void mergeSort_ms(int arr[], int p, int r) {
 
 /**
  * Merge Sort - Função merge (conquer)
- * 
+ *
  * @param arr
  * @param arraySize
  */
@@ -208,7 +238,7 @@ void mergeSort_merge(int arr[], int p, int q, int r) {
     }
 }
 
-/** 
+/**
  * Função auxiliar para realizar a troca de 2 elementos de posição
  */
 void swapValue(int *arr, int idxA, int idxB) {
