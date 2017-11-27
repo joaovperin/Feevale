@@ -41,17 +41,10 @@ clock_t clockStart, clockEnd;
 #define OPT_MERGE '4'
 #define OPT_TESTS '5'
 
-/**
- * SIMULAÇÃO BUG MERGE:
- * 
- * Opção 4;
- * Array tamanho 12;
- */
-
-#define SIZE_1 1  /*   1000 */
-#define SIZE_2 5  /*  50000 */
-#define SIZE_3 7  /* 100000 */
-#define SIZE_4 12 /* 200000 */
+#define SIZE_1   10    /*   1000 */
+#define SIZE_2  500   /*  50000 */
+#define SIZE_3 1000  /* 100000 */
+#define SIZE_4 2000 /* 200000 */
 
 void executaTesteComparacao();
 void execTestesBubbleSort(int *arr, int mtz[], int arraySize);
@@ -99,9 +92,8 @@ int main(int argc, char** argv) {
     }
 
     /** Array inicial */
-    int arrayStartSize = aceitaTamanhoInicial();
-    int arr[arrayStartSize];
-    int arraySize = sizeof (arr) / sizeof (int);
+    int arraySize = aceitaTamanhoInicial();
+    int arr[arraySize + 1];
     // Inicializa gerador de aleatórios
     srand(time(NULL));
     for (int i = 0; i < arraySize; i++) arr[i] = rand() % 1000;
@@ -261,14 +253,14 @@ void execTestesSelectionSort(int *arr, int mtz[], int arraySize) {
 
 void execTestesInsertionSort(int *arr, int mtz[], int arraySize) {
     printf("\n** Tamanho do array: %06d", arraySize);
-    arr = arr = comeca(arraySize, mtz);
+    arr = comeca(arraySize, mtz);
     insertionSort(arr, arraySize);
     finaliza(arr);
 }
 
 void execTestesMergeSort(int *arr, int mtz[], int arraySize) {
     printf("\n** Tamanho do array: %06d", arraySize);
-    arr = arr = comeca(arraySize, mtz);
+    arr = comeca(arraySize, mtz);
     mergeSort(arr, arraySize);
     finaliza(arr);
 }
@@ -296,6 +288,11 @@ char acceptMenu() {
     return tmp;
 }
 
+/**
+ * Aceita o tamanho inicial do array
+ * 
+ * @return int
+ */
 int aceitaTamanhoInicial() {
     int tam = -1;
     do {
@@ -306,6 +303,9 @@ int aceitaTamanhoInicial() {
     return tam;
 }
 
+/**
+ * Executa os testes de comparação
+ */
 void executaTesteComparacao() {
     /** Array matriz */
     int mtz[SIZE_4];
@@ -313,27 +313,26 @@ void executaTesteComparacao() {
     int arraySize = sizeof (mtz) / sizeof (int);
     // Popula o array matriz com dados iniciais
     for (int i = 0; i < arraySize; i++) mtz[i] = rand() % 1000;
-
     // *********** BUBBLE ************* //
-    printf("\n\nBubble Sort");
+    printf("\n\n-> Bubble Sort");
     execTestesBubbleSort(arr, mtz, SIZE_1);
     execTestesBubbleSort(arr, mtz, SIZE_2);
     execTestesBubbleSort(arr, mtz, SIZE_3);
     execTestesBubbleSort(arr, mtz, SIZE_4);
     // *********** SELECTION ************* //
-    printf("\n\nSelection Sort");
+    printf("\n\n-> Selection Sort");
     execTestesSelectionSort(arr, mtz, SIZE_1);
     execTestesSelectionSort(arr, mtz, SIZE_2);
     execTestesSelectionSort(arr, mtz, SIZE_3);
     execTestesSelectionSort(arr, mtz, SIZE_4);
     // *********** INSERTION ************* //
-    printf("\n\nInsertion Sort");
+    printf("\n\n-> Insertion Sort");
     execTestesInsertionSort(arr, mtz, SIZE_1);
     execTestesInsertionSort(arr, mtz, SIZE_2);
     execTestesInsertionSort(arr, mtz, SIZE_3);
     execTestesInsertionSort(arr, mtz, SIZE_4);
     // *********** SELECTION ************* //
-    printf("\n\nSelection Sort");
+    printf("\n\n-> Selection Sort");
     execTestesSelectionSort(arr, mtz, SIZE_1);
     execTestesSelectionSort(arr, mtz, SIZE_2);
     execTestesSelectionSort(arr, mtz, SIZE_3);
@@ -371,25 +370,44 @@ void swapValue(int *arr, int idxA, int idxB) {
     *(arr + idxB) = temp;
 }
 
+/**
+ * Inicia o timer
+ */
 void timerOn() {
     clockStart = clock();
 }
 
+/**
+ * Finaliza o timer
+ */
 void timerOff() {
     clockEnd = clock();
 }
 
+/**
+ * Printa o tempo decorrido
+ */
 void timerPrint() {
     printf("\nTempo decorrido: %dms", (clockEnd - clockStart) / (CLOCKS_PER_SEC / 1000));
 }
 
+/**
+ * Inicializa uma execução de comparação
+ * 
+ * @param ptr
+ */
 int* comeca(int arraySize, int mtz[]) {
-    int *ptr = (int*) calloc(arraySize, sizeof (int));
+    int *ptr = (int*) calloc(arraySize + 1, sizeof (int));
     for (int i = 0; i < arraySize; i++) *(ptr + i) = mtz[i];
     timerOn();
     return ptr;
 }
 
+/**
+ * Finaliza uma execução de comparação
+ * 
+ * @param ptr
+ */
 void finaliza(int *ptr) {
     timerOff();
     timerPrint();
