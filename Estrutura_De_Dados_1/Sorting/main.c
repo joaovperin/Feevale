@@ -15,10 +15,6 @@
 #include <stdlib.h>
 #include <limits.h>
 #include <time.h>
-#include "Default.h"
-
-/** Tamanho do array */
-#define PRINT 0
 
 void bubbleSort(int arr[], int arraySize);
 void selectionSort(int arr[], int arraySize);
@@ -38,64 +34,70 @@ void timerPrint();
 // Instâncias globais do clock para controle de benchmarking
 clock_t clockStart, clockEnd;
 
+#define OPT_EXIT '0'
 #define OPT_BUBBLE '1'
 #define OPT_SELECTION '2'
 #define OPT_INSERTION '3'
 #define OPT_MERGE '4'
+#define OPT_TESTS '5'
 
 #define SIZE_1 1000
 #define SIZE_2 50000
 #define SIZE_3 100000
 #define SIZE_4 200000
 
-int ArrayStartSize = SIZE_1;
+void executaTesteComparacao();
+void execTestesBubbleSort(int *arr, int mtz[], int arraySize);
+void execTestesSelectionSort(int *arr, int mtz[], int arraySize);
+void execTestesInsertionSort(int *arr, int mtz[], int arraySize);
+void execTestesMergeSort(int *arr, int mtz[], int arraySize);
 
-char showMenu() {
-    char tmp = '\0';
+int aceitaTamanhoInicial();
+char acceptMenu();
+int* comeca(int arraySize, int mtz[]);
+void finaliza(int *ptr);
 
-    printf("\n ***********:");
-    printf("\n * 0-Sair");
-    printf("\n * 1-%6d", SIZE_1);
-    printf("\n * 2-%6d", SIZE_2);
-    printf("\n * 3-%6d", SIZE_3);
-    printf("\n * 4-%6d", SIZE_4);
-    printf("\n ***********:");
-
-    do {
-        printf("\nEscolha: ");
-        scanf("%c", &tmp);
-    } while (tmp != '1' && tmp != '2' && tmp != '3' && tmp != '4' && tmp != '0');
-
-    return tmp;
-}
+/** Limpa o buffer do teclado */
+void limpaBuffer();
+/** Printa um array */
+void printaArray(int arr[], int arrSize);
+/** Troca o valor de 2 posições de um array */
+void swapValue(int *arr, int idxA, int idxB);
 
 /*
  * Main Entry point
  */
 int main(int argc, char** argv) {
+    // Inicializa gerador de aleatórios
+    srand(time(NULL));
     // Opção Default = Bubble
     char opt = OPT_BUBBLE;
     // Se recebeu por linha de comando, atribui a opção
     if (argc == 2) {
         opt = (char) *(argv + 1)[0];
     } else {
-        opt = showMenu();
+        opt = acceptMenu();
+    }
+    // Se for pra encerrar o programa
+    if (opt == OPT_EXIT) {
+        printf("\nBye bye :D\n");
+        return (EXIT_SUCCESS);
+    }
+    // Se for opção de comparação....
+    if (opt == '5') {
+        printf("\nIniciando testes de comparação...");
+        executaTesteComparacao();
+        printf("\n");
+        return (EXIT_SUCCESS);
     }
 
     /** Array inicial */
-    int arr[ArrayStartSize];
+    int arrayStartSize = aceitaTamanhoInicial();
+    int arr[arrayStartSize];
     int arraySize = sizeof (arr) / sizeof (int);
     // Inicializa gerador de aleatórios
     srand(time(NULL));
     for (int i = 0; i < arraySize; i++) arr[i] = rand() % 1000;
-
-    if (PRINT) {
-        printf("Antes:\n");
-        printaArray(arr, arraySize);
-    }
-
-
-
 
     timerOn();
     // Avalia a opção escolhida
@@ -121,11 +123,6 @@ int main(int argc, char** argv) {
             break;
     }
     timerOff();
-
-    if (PRINT) {
-        printf("\nDepois:\n");
-        printaArray(arr, arraySize);
-    }
     timerPrint();
 
     printf("\n");
@@ -238,6 +235,122 @@ void mergeSort_merge(int arr[], int p, int q, int r) {
     }
 }
 
+void execTestesBubbleSort(int *arr, int mtz[], int arraySize) {
+    printf("\n** Tamanho do array: %06d", arraySize);
+    arr = comeca(arraySize, mtz);
+    bubbleSort(arr, arraySize);
+    finaliza(arr);
+}
+
+void execTestesSelectionSort(int *arr, int mtz[], int arraySize) {
+    printf("\n** Tamanho do array: %06d", arraySize);
+    arr = comeca(arraySize, mtz);
+    selectionSort(arr, arraySize);
+    finaliza(arr);
+}
+
+void execTestesInsertionSort(int *arr, int mtz[], int arraySize) {
+    printf("\n** Tamanho do array: %06d", arraySize);
+    arr = arr = comeca(arraySize, mtz);
+    insertionSort(arr, arraySize);
+    finaliza(arr);
+}
+
+void execTestesMergeSort(int *arr, int mtz[], int arraySize) {
+    printf("\n** Tamanho do array: %06d", arraySize);
+    arr = arr = comeca(arraySize, mtz);
+    mergeSort(arr, arraySize);
+    finaliza(arr);
+}
+
+/**
+ * Função responsável por exibir e aceitar o menu
+ *
+ * @return char
+ */
+char acceptMenu() {
+    char tmp = '\0';
+    printf("\n ***********:");
+    printf("\n * %2c-Sair", OPT_EXIT);
+    printf("\n * %2c-Bubble Sort", OPT_BUBBLE);
+    printf("\n * %2c-Selection Sort", OPT_SELECTION);
+    printf("\n * %2c-Insertion Sort", OPT_INSERTION);
+    printf("\n * %2c-Merge Sort", OPT_MERGE);
+    printf("\n * %2c-Testes Desempenho", OPT_TESTS);
+    printf("\n ***********:");
+    do {
+        printf("\nEscolha: ");
+        scanf("%c", &tmp);
+    } while (tmp != '1' && tmp != '2' && tmp != '3' && tmp != '4' && tmp != '5' && tmp != '0');
+    return tmp;
+}
+
+int aceitaTamanhoInicial() {
+    int tam = -1;
+    do {
+        printf("\nDiga o tamanho do array: ");
+        limpaBuffer();
+        scanf("%6d", &tam);
+    } while (tam <= 0);
+    return tam;
+}
+
+void executaTesteComparacao() {
+    /** Array matriz */
+    int mtz[SIZE_4];
+    int *arr = NULL;
+    int arraySize = sizeof (mtz) / sizeof (int);
+    // Popula o array matriz com dados iniciais
+    for (int i = 0; i < arraySize; i++) mtz[i] = rand() % 1000;
+
+    // *********** BUBBLE ************* //
+    printf("\n\nBubble Sort");
+    execTestesBubbleSort(arr, mtz, SIZE_1);
+    execTestesBubbleSort(arr, mtz, SIZE_2);
+    //execTestesBubbleSort(arr, mtz, SIZE_3);
+    //execTestesBubbleSort(arr, mtz, SIZE_4);
+    // *********** SELECTION ************* //
+    printf("\n\nSelection Sort");
+    execTestesSelectionSort(arr, mtz, SIZE_1);
+    execTestesSelectionSort(arr, mtz, SIZE_2);
+    execTestesSelectionSort(arr, mtz, SIZE_3);
+    //execTestesSelectionSort(arr, mtz, SIZE_4);
+    // *********** INSERTION ************* //
+    printf("\n\nInsertion Sort");
+    execTestesInsertionSort(arr, mtz, SIZE_1);
+    execTestesInsertionSort(arr, mtz, SIZE_2);
+    execTestesInsertionSort(arr, mtz, SIZE_3);
+    //execTestesInsertionSort(arr, mtz, SIZE_4);
+    // *********** SELECTION ************* //
+    printf("\n\nSelection Sort");
+    execTestesSelectionSort(arr, mtz, SIZE_1);
+    execTestesSelectionSort(arr, mtz, SIZE_2);
+    execTestesSelectionSort(arr, mtz, SIZE_3);
+    //execTestesSelectionSort(arr, mtz, SIZE_4);
+    // *********** MERGE ************* //
+    printf("\n\nMerge Sort");
+    execTestesMergeSort(arr, mtz, SIZE_1);
+    execTestesMergeSort(arr, mtz, SIZE_2);
+    execTestesMergeSort(arr, mtz, SIZE_3);
+    execTestesMergeSort(arr, mtz, SIZE_4);
+}
+
+/** Limpa o buffer do teclado */
+void limpaBuffer() {
+    fflush(stdin);
+}
+
+/** Printa um array */
+void printaArray(int arr[], int arrSize) {
+    if (arrSize <= 1) {
+        printf("Array com tamanho inválido.\n");
+        return;
+    }
+    for (int i = 0; i < arrSize; i++) {
+        printf("P%02d:%3d\n", i + 1, arr[i]);
+    }
+}
+
 /**
  * Função auxiliar para realizar a troca de 2 elementos de posição
  */
@@ -257,4 +370,17 @@ void timerOff() {
 
 void timerPrint() {
     printf("\nTempo decorrido: %dms", (clockEnd - clockStart) / (CLOCKS_PER_SEC / 1000));
+}
+
+int* comeca(int arraySize, int mtz[]) {
+    int *ptr = (int*) calloc(arraySize, sizeof (int));
+    for (int i = 0; i < arraySize; i++) *(ptr + i) = mtz[i];
+    timerOn();
+    return ptr;
+}
+
+void finaliza(int *ptr) {
+    timerOff();
+    timerPrint();
+    free(ptr);
 }
