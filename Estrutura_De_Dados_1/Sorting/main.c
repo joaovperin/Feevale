@@ -41,10 +41,17 @@ clock_t clockStart, clockEnd;
 #define OPT_MERGE '4'
 #define OPT_TESTS '5'
 
-#define SIZE_1 1000
-#define SIZE_2 50000
-#define SIZE_3 100000
-#define SIZE_4 200000
+/**
+ * SIMULAÇÃO BUG MERGE:
+ * 
+ * Opção 4;
+ * Array tamanho 12;
+ */
+
+#define SIZE_1 1  /*   1000 */
+#define SIZE_2 5  /*  50000 */
+#define SIZE_3 7  /* 100000 */
+#define SIZE_4 12 /* 200000 */
 
 void executaTesteComparacao();
 void execTestesBubbleSort(int *arr, int mtz[], int arraySize);
@@ -99,6 +106,7 @@ int main(int argc, char** argv) {
     srand(time(NULL));
     for (int i = 0; i < arraySize; i++) arr[i] = rand() % 1000;
 
+    printaArray(arr, arraySize);
     timerOn();
     // Avalia a opção escolhida
     switch (opt) {
@@ -115,10 +123,8 @@ int main(int argc, char** argv) {
             insertionSort(arr, arraySize);
             break;
         case OPT_MERGE:
-            printaArray(arr, arraySize);
             printf("\nMerge Sort");
             mergeSort(arr, arraySize);
-            printaArray(arr, arraySize);
             break;
         default:
             printf("Opção não reconhecida.\n");
@@ -126,6 +132,8 @@ int main(int argc, char** argv) {
     }
     timerOff();
     timerPrint();
+    putchar('\n');
+    printaArray(arr, arraySize);
 
     printf("\n");
     return (EXIT_SUCCESS);
@@ -224,12 +232,11 @@ void mergeSort_merge(int arr[], int p, int q, int r) {
     // Cria 2 subarrays para a esquerda e direita do array principal
     int leftSize = (q - p + 1), rightSize = (r - q);
     int left[leftSize + 1], right[rightSize + 1];
-    left[0]=0;
     // Inicializa os subarrays
-    for (int idx = 0; idx <= leftSize; idx++) left[idx + 1] = *(arr + p + idx - 1);
+    for (int idx = 0; idx <= leftSize; idx++) left[idx] = *(arr + p + idx - 1);
     for (int idx = 0; idx <= rightSize; idx++) right[idx] = *(arr + q + idx);
-    left[leftSize] = INT_MAX;
-    right[rightSize] = INT_MAX;
+    left[leftSize + 1] = INT_MAX;
+    right[rightSize + 1] = INT_MAX;
     // Realiza o merge dos subarrays no array principal
     int i = 1, j = 1;
     for (int idx = p; idx <= r; idx++) {
@@ -282,6 +289,7 @@ char acceptMenu() {
     printf("\n * %2c-Testes Desempenho", OPT_TESTS);
     printf("\n ***********:");
     do {
+        limpaBuffer();
         printf("\nEscolha: ");
         scanf("%c", &tmp);
     } while (tmp != '1' && tmp != '2' && tmp != '3' && tmp != '4' && tmp != '5' && tmp != '0');
@@ -310,26 +318,26 @@ void executaTesteComparacao() {
     printf("\n\nBubble Sort");
     execTestesBubbleSort(arr, mtz, SIZE_1);
     execTestesBubbleSort(arr, mtz, SIZE_2);
-    //execTestesBubbleSort(arr, mtz, SIZE_3);
-    //execTestesBubbleSort(arr, mtz, SIZE_4);
+    execTestesBubbleSort(arr, mtz, SIZE_3);
+    execTestesBubbleSort(arr, mtz, SIZE_4);
     // *********** SELECTION ************* //
     printf("\n\nSelection Sort");
     execTestesSelectionSort(arr, mtz, SIZE_1);
     execTestesSelectionSort(arr, mtz, SIZE_2);
     execTestesSelectionSort(arr, mtz, SIZE_3);
-    //execTestesSelectionSort(arr, mtz, SIZE_4);
+    execTestesSelectionSort(arr, mtz, SIZE_4);
     // *********** INSERTION ************* //
     printf("\n\nInsertion Sort");
     execTestesInsertionSort(arr, mtz, SIZE_1);
     execTestesInsertionSort(arr, mtz, SIZE_2);
     execTestesInsertionSort(arr, mtz, SIZE_3);
-    //execTestesInsertionSort(arr, mtz, SIZE_4);
+    execTestesInsertionSort(arr, mtz, SIZE_4);
     // *********** SELECTION ************* //
     printf("\n\nSelection Sort");
     execTestesSelectionSort(arr, mtz, SIZE_1);
     execTestesSelectionSort(arr, mtz, SIZE_2);
     execTestesSelectionSort(arr, mtz, SIZE_3);
-    //execTestesSelectionSort(arr, mtz, SIZE_4);
+    execTestesSelectionSort(arr, mtz, SIZE_4);
     // *********** MERGE ************* //
     printf("\n\nMerge Sort");
     execTestesMergeSort(arr, mtz, SIZE_1);
@@ -344,13 +352,13 @@ void limpaBuffer() {
 }
 
 /** Printa um array */
-void printaArray(int arr[], int arrSize) {
+void printaArray(int *arr, int arrSize) {
     if (arrSize <= 1) {
         printf("Array com tamanho inválido.\n");
         return;
     }
     for (int i = 0; i < arrSize; i++) {
-        printf("P%02d:%3d\n", i + 1, arr[i]);
+        printf("P%03d:%4d\n", i + 1, *(arr + i));
     }
 }
 
