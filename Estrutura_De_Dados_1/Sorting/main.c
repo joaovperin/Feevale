@@ -115,8 +115,10 @@ int main(int argc, char** argv) {
             insertionSort(arr, arraySize);
             break;
         case OPT_MERGE:
+            printaArray(arr, arraySize);
             printf("\nMerge Sort");
             mergeSort(arr, arraySize);
+            printaArray(arr, arraySize);
             break;
         default:
             printf("Opção não reconhecida.\n");
@@ -222,11 +224,12 @@ void mergeSort_merge(int arr[], int p, int q, int r) {
     // Cria 2 subarrays para a esquerda e direita do array principal
     int leftSize = (q - p + 1), rightSize = (r - q);
     int left[leftSize + 1], right[rightSize + 1];
+    left[0]=0;
     // Inicializa os subarrays
-    for (int idx = 0; idx <= leftSize; idx++) left[idx] = *(arr + p + idx - 1);
+    for (int idx = 0; idx <= leftSize; idx++) left[idx + 1] = *(arr + p + idx - 1);
     for (int idx = 0; idx <= rightSize; idx++) right[idx] = *(arr + q + idx);
-    left[leftSize + 1] = INT_MAX;
-    right[rightSize + 1] = INT_MAX;
+    left[leftSize] = INT_MAX;
+    right[rightSize] = INT_MAX;
     // Realiza o merge dos subarrays no array principal
     int i = 1, j = 1;
     for (int idx = p; idx <= r; idx++) {
