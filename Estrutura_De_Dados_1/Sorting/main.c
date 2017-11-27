@@ -46,6 +46,9 @@ clock_t clockStart, clockEnd;
 #define SIZE_3 1000  /* 100000 */
 #define SIZE_4 2000 /* 200000 */
 
+/** Limite de tamanho do array */
+#define LIMIT_SIZE 260548
+
 void executaTesteComparacao();
 void execTestesBubbleSort(int *arr, int mtz[], int arraySize);
 void execTestesSelectionSort(int *arr, int mtz[], int arraySize);
@@ -54,6 +57,7 @@ void execTestesMergeSort(int *arr, int mtz[], int arraySize);
 
 int aceitaTamanhoInicial();
 char acceptMenu();
+int isMenuValido(char l);
 int* comeca(int arraySize, int mtz[]);
 void finaliza(int *ptr);
 
@@ -75,6 +79,11 @@ int main(int argc, char** argv) {
     // Se recebeu por linha de comando, atribui a opção
     if (argc == 2) {
         opt = (char) *(argv + 1)[0];
+        // Valida o menu
+        if (!isMenuValido(opt)) {
+            printf("Menu inválido: %c\nEncerrando programa.\n", opt);
+            return (EXIT_SUCCESS);
+        }
     } else {
         opt = acceptMenu();
     }
@@ -98,7 +107,7 @@ int main(int argc, char** argv) {
     srand(time(NULL));
     for (int i = 0; i < arraySize; i++) arr[i] = rand() % 1000;
 
-    printaArray(arr, arraySize);
+    //    printaArray(arr, arraySize);
     timerOn();
     // Avalia a opção escolhida
     switch (opt) {
@@ -125,7 +134,7 @@ int main(int argc, char** argv) {
     timerOff();
     timerPrint();
     putchar('\n');
-    printaArray(arr, arraySize);
+    //    printaArray(arr, arraySize);
 
     printf("\n");
     return (EXIT_SUCCESS);
@@ -284,7 +293,7 @@ char acceptMenu() {
         limpaBuffer();
         printf("\nEscolha: ");
         scanf("%c", &tmp);
-    } while (tmp != '1' && tmp != '2' && tmp != '3' && tmp != '4' && tmp != '5' && tmp != '0');
+    } while (!isMenuValido(tmp));
     return tmp;
 }
 
@@ -299,7 +308,7 @@ int aceitaTamanhoInicial() {
         printf("\nDiga o tamanho do array: ");
         limpaBuffer();
         scanf("%6d", &tam);
-    } while (tam <= 0);
+    } while (tam <= 0 || tam > LIMIT_SIZE);
     return tam;
 }
 
@@ -343,6 +352,16 @@ void executaTesteComparacao() {
     execTestesMergeSort(arr, mtz, SIZE_2);
     execTestesMergeSort(arr, mtz, SIZE_3);
     execTestesMergeSort(arr, mtz, SIZE_4);
+}
+
+/**
+ * Verifica/confere se é um menu válido
+ * 
+ * @param l letra
+ * @return int
+ */
+int isMenuValido(char l) {
+    return !(l != '1' && l != '2' && l != '3' && l != '4' && l != '5' && l != '0');
 }
 
 /** Limpa o buffer do teclado */
