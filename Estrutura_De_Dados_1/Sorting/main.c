@@ -41,10 +41,10 @@ clock_t clockStart, clockEnd;
 #define OPT_MERGE '4'
 #define OPT_TESTS '5'
 
-#define SIZE_1   10    /*   1000 */
-#define SIZE_2  500   /*  50000 */
-#define SIZE_3 1000  /* 100000 */
-#define SIZE_4 2000 /* 200000 */
+#define SIZE_1   1000    /*   1000 */
+#define SIZE_2  50000   /*  50000 */
+#define SIZE_3 100000  /* 100000 */
+#define SIZE_4 200000 /* 200000 */
 
 /** Limite de tamanho do array */
 #define LIMIT_SIZE 260548
@@ -298,7 +298,7 @@ char acceptMenu() {
 
 /**
  * Aceita o tamanho inicial do array
- * 
+ *
  * @return int
  */
 int aceitaTamanhoInicial() {
@@ -355,7 +355,7 @@ void executaTesteComparacao() {
 
 /**
  * Verifica/confere se é um menu válido
- * 
+ *
  * @param l letra
  * @return int
  */
@@ -412,7 +412,7 @@ void timerPrint() {
 
 /**
  * Inicializa uma execução de comparação
- * 
+ *
  * @param ptr
  */
 int* comeca(int arraySize, int mtz[]) {
@@ -424,7 +424,7 @@ int* comeca(int arraySize, int mtz[]) {
 
 /**
  * Finaliza uma execução de comparação
- * 
+ *
  * @param ptr
  */
 void finaliza(int *ptr) {
