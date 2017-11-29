@@ -107,7 +107,7 @@ int main(int argc, char** argv) {
     srand(time(NULL));
     for (int i = 0; i < arraySize; i++) arr[i] = rand() % 1000;
 
-    //    printaArray(arr, arraySize);
+    printaArray(arr, arraySize);
     timerOn();
     // Avalia a opção escolhida
     switch (opt) {
@@ -134,7 +134,7 @@ int main(int argc, char** argv) {
     timerOff();
     timerPrint();
     putchar('\n');
-    //    printaArray(arr, arraySize);
+    printaArray(arr, arraySize);
 
     printf("\n");
     return (EXIT_SUCCESS);
@@ -187,11 +187,10 @@ void insertionSort(int arr[], int arraySize) {
     // Percorre o array a pt. da segunda posição
     for (int i = 1; i < arraySize; i++) {
         // Percorre decrescentemente a pt. da posição escolhida
-        for (int k = i; k > 0; k--) {
+        // reordenando os elementos subsequentes
+        for (int k = i; k > 0 && arr[k] < arr[k - 1]; k--) {
             // Se o elemento for menor que o anterior, troca
-            if (arr[k] < arr[k - 1]) {
-                swapValue(arr, k, k - 1);
-            }
+            swapValue(arr, k, k - 1);
         }
     }
 }
@@ -371,6 +370,7 @@ void limpaBuffer() {
 
 /** Printa um array */
 void printaArray(int *arr, int arrSize) {
+    if (arrSize > 15) return;
     if (arrSize <= 1) {
         printf("Array com tamanho inválido.\n");
         return;
