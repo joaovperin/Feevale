@@ -41,6 +41,10 @@ clock_t clockStart, clockEnd;
 #define OPT_MERGE '4'
 #define OPT_TESTS '5'
 
+#define TYPE_RANDOM '1'
+#define TYPE_CRESCENTE '2'
+#define TYPE_DECRESCENTE '3'
+
 #define SIZE_1   1000    /*   1000 */
 #define SIZE_2  50000   /*  50000 */
 #define SIZE_3 100000  /* 100000 */
@@ -49,15 +53,19 @@ clock_t clockStart, clockEnd;
 /** Limite de tamanho do array */
 #define LIMIT_SIZE 260548
 
-void executaTesteComparacao();
+void executaTesteComparacao(char type);
 void execTestesBubbleSort(int *arr, int mtz[], int arraySize);
 void execTestesSelectionSort(int *arr, int mtz[], int arraySize);
 void execTestesInsertionSort(int *arr, int mtz[], int arraySize);
 void execTestesMergeSort(int *arr, int mtz[], int arraySize);
 
+void createNewArray(int arr[], int arraySize, char type);
+
 int aceitaTamanhoInicial();
 char acceptMenu();
+char acceptType();
 int isMenuValido(char l);
+int isTypeValido(char l);
 int* comeca(int arraySize, int mtz[]);
 void finaliza(int *ptr);
 
@@ -74,18 +82,28 @@ void swapValue(int *arr, int idxA, int idxB);
 int main(int argc, char** argv) {
     // Inicializa gerador de aleatórios
     srand(time(NULL));
+
+    char chTmp = '\0';
     // Opção Default = Bubble
     char opt = OPT_BUBBLE;
+    char type = TYPE_RANDOM;
     // Se recebeu por linha de comando, atribui a opção
-    if (argc == 2) {
-        opt = (char) *(argv + 1)[0];
-        // Valida o menu
-        if (!isMenuValido(opt)) {
-            printf("Menu inválido: %c\nEncerrando programa.\n", opt);
-            return (EXIT_SUCCESS);
+    if (argc > 1) {
+        // Arg.1 = Sort_Mode
+        chTmp = (char) *(argv + 1)[0];
+        if (isMenuValido(opt)) {
+            opt = chTmp;
+        }
+        // Arg.2 = Array Inicial ordenado
+        if (argc > 2) {
+            chTmp = (char) *(argv + 2)[0];
+            if (isTypeValido(opt)) {
+                type = chTmp;
+            }
         }
     } else {
         opt = acceptMenu();
+        type = acceptType();
     }
     // Se for pra encerrar o programa
     if (opt == OPT_EXIT) {
@@ -95,7 +113,7 @@ int main(int argc, char** argv) {
     // Se for opção de comparação....
     if (opt == '5') {
         printf("\nIniciando testes de comparação...");
-        executaTesteComparacao();
+        executaTesteComparacao(type);
         printf("\n");
         return (EXIT_SUCCESS);
     }
@@ -103,9 +121,7 @@ int main(int argc, char** argv) {
     /** Array inicial */
     int arraySize = aceitaTamanhoInicial();
     int arr[arraySize + 1];
-    // Inicializa gerador de aleatórios
-    srand(time(NULL));
-    for (int i = 0; i < arraySize; i++) arr[i] = rand() % 1000;
+    createNewArray(arr, arraySize, type);
 
     printaArray(arr, arraySize);
     timerOn();
@@ -184,17 +200,6 @@ void selectionSort(int arr[], int arraySize) {
  * @param arraySize
  */
 void insertionSort(int arr[], int arraySize) {
-    // teste implementação 2 :/
-    int i = 1, k;
-    while (i < arraySize) {
-        k = i;
-        while (k > 0 && arr[k] < arr[k - 1]) {
-            swapValue(arr, k, k - 1);
-            k--;
-        }
-        i++;
-    }
-    return;
     // Percorre o array a pt. da segunda posição
     for (int i = 1; i < arraySize; i++) {
         // Percorre decrescentemente a pt. da posição escolhida
@@ -307,6 +312,21 @@ char acceptMenu() {
     return tmp;
 }
 
+char acceptType() {
+    char tmp = '\0';
+    printf("\n ***********:");
+    printf("\n * %2c-Aleatório", TYPE_RANDOM);
+    printf("\n * %2c-Ordenado Crescente", TYPE_CRESCENTE);
+    printf("\n * %2c-Ordenado Decrescente", TYPE_CRESCENTE);
+    printf("\n ***********:");
+    do {
+        limpaBuffer();
+        printf("\nEscolha: ");
+        scanf("%c", &tmp);
+    } while (!isTypeValido(tmp));
+    return tmp;
+}
+
 /**
  * Aceita o tamanho inicial do array
  *
@@ -325,13 +345,13 @@ int aceitaTamanhoInicial() {
 /**
  * Executa os testes de comparação
  */
-void executaTesteComparacao() {
+void executaTesteComparacao(char type) {
     /** Array matriz */
     int mtz[SIZE_4];
     int *arr = NULL;
     int arraySize = sizeof (mtz) / sizeof (int);
     // Popula o array matriz com dados iniciais
-    for (int i = 0; i < arraySize; i++) mtz[i] = rand() % 1000;
+    createNewArray(mtz, arraySize, type);
     // *********** BUBBLE ************* //
     printf("\n\n-> Bubble Sort");
     execTestesBubbleSort(arr, mtz, SIZE_1);
@@ -368,6 +388,10 @@ int isMenuValido(char l) {
     return !(l != '1' && l != '2' && l != '3' && l != '4' && l != '5' && l != '0');
 }
 
+int isTypeValido(char l) {
+    return !(l != '1' && l != '2' && l != '3');
+}
+
 /** Limpa o buffer do teclado */
 void limpaBuffer() {
     fflush(stdin);
@@ -382,6 +406,21 @@ void printaArray(int *arr, int arrSize) {
     }
     for (int i = 0; i < arrSize; i++) {
         printf("P%03d:%4d\n", i + 1, *(arr + i));
+    }
+}
+
+void createNewArray(int arr[], int arraySize, char type) {
+    switch (type) {
+        default:
+        case TYPE_RANDOM:
+            for (int i = 0; i < arraySize; i++) arr[i] = rand() % 1000;
+            return;
+        case TYPE_CRESCENTE:
+            for (int i = 0; i < arraySize; i++) arr[i] = i;
+            return;
+        case TYPE_DECRESCENTE:
+            for (int i = 0; i < arraySize; i++) arr[arraySize - i - 1] = i;
+            return;
     }
 }
 
