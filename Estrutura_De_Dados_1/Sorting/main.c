@@ -184,6 +184,17 @@ void selectionSort(int arr[], int arraySize) {
  * @param arraySize
  */
 void insertionSort(int arr[], int arraySize) {
+    // teste implementação 2 :/
+    int i = 1, k;
+    while (i < arraySize) {
+        k = i;
+        while (k > 0 && arr[k] < arr[k - 1]) {
+            swapValue(arr, k, k - 1);
+            k--;
+        }
+        i++;
+    }
+    return;
     // Percorre o array a pt. da segunda posição
     for (int i = 1; i < arraySize; i++) {
         // Percorre decrescentemente a pt. da posição escolhida
@@ -339,12 +350,6 @@ void executaTesteComparacao() {
     execTestesInsertionSort(arr, mtz, SIZE_2);
     execTestesInsertionSort(arr, mtz, SIZE_3);
     execTestesInsertionSort(arr, mtz, SIZE_4);
-    // *********** SELECTION ************* //
-    printf("\n\n-> Selection Sort");
-    execTestesSelectionSort(arr, mtz, SIZE_1);
-    execTestesSelectionSort(arr, mtz, SIZE_2);
-    execTestesSelectionSort(arr, mtz, SIZE_3);
-    execTestesSelectionSort(arr, mtz, SIZE_4);
     // *********** MERGE ************* //
     printf("\n\nMerge Sort");
     execTestesMergeSort(arr, mtz, SIZE_1);
