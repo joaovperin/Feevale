@@ -62,3 +62,41 @@ A =
 = (6 + 120 + 168) - (42 + 64 + 30)
 = (294) - (136)
 = 158
+
+
+--------------------------------------------------------
+
+Software: Maxima (ou Wxmaxima) 
+pacman -S maxima wxmaxima
+
+tem pra windows e outros linux tb
+
+## Matriz inversa
+
+Para ser possível inverter uma matriz, B*A = A*B = I
+
+Dispositivo p/ inverter matriz de ordem 2:
+1) Trocar os elementos de posição da diagonal principal
+2) Trocar os sinais dos elementos da diagonal secundária
+3) Calcular o determinante da matriz (se for zero, ela não tem inversa)
+4) Dividir todos os elementos da "nova matriz" pelo determinante da matriz
+   
+   Ex.:
+   Dados as matriz A e B, verifique se A é inversa de B, ou se B é inversa de A.
+
+A =    
+[  8   5 ]
+[  3  -2 ]
+B =    
+[  2  -5 ]
+[ -3   8 ]
+
+detA = ([8 * -2] - [5*3]) = -16 -15 = -31
+
+A⁻1 = -1/31  * 
+[ -2  -5 ]
+[ -3   8 ]
+
+A⁻1 = -1/31  * 
+[  2/31  5/31 ]
+[  3/31 -8/31 ]
