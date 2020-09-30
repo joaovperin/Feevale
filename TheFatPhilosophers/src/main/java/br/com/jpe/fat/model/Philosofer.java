@@ -5,6 +5,8 @@
  */
 package br.com.jpe.fat.model;
 
+import static br.com.jpe.fat.Main.EAT_TIME;
+import static br.com.jpe.fat.Main.THINK_TIME;
 import br.com.jpe.fat.utils.SystemUtils;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -14,23 +16,25 @@ import java.util.concurrent.atomic.AtomicInteger;
  */
 public class Philosofer {
 
-    private static final int THINK_TIME = 50;
-    private static final int EAT_TIME = 50;
-
+    /** just a counter for the actions */
     protected static AtomicInteger actionCount = new AtomicInteger(0);
 
+    /** controls the thread loop */
     protected boolean alive;
 
     protected final String name;
-    protected PhilosoferStatus status;
+    protected PhilosoferAction nextAction;
 
+    /**
+     * data for the reports
+     */
     protected int thinkCount = 0;
     protected int eatCount = 0;
 
     public Philosofer(String name) {
         this.name = name;
-        alive = true;
-        this.status = PhilosoferStatus.THINKING;
+        this.alive = true;
+        this.nextAction = PhilosoferAction.THINK;
     }
 
     public String getName() {
@@ -38,25 +42,25 @@ public class Philosofer {
     }
 
     public boolean isThinking() {
-        return PhilosoferStatus.THINKING.equals(this.status);
+        return PhilosoferAction.THINK.equals(this.nextAction);
     }
 
     public boolean isEating() {
-        return PhilosoferStatus.EATING.equals(this.status);
+        return PhilosoferAction.EAT.equals(this.nextAction);
     }
 
     public void think() {
         SystemUtils.printf("%04d:>\t'%s' is meditating", actionCount.incrementAndGet(), getName());
         this.thinkCount++;
         SystemUtils.sleep(THINK_TIME);
-        this.status = PhilosoferStatus.THINKING;
+        this.nextAction = PhilosoferAction.EAT;
     }
 
     public void eat(String msg) {
         SystemUtils.printf("%04d:>\t'%s' is eating %s", actionCount.incrementAndGet(), getName(), msg);
         this.eatCount++;
         SystemUtils.sleep(EAT_TIME);
-        this.status = PhilosoferStatus.EATING;
+        this.nextAction = PhilosoferAction.THINK;
     }
 
     public int getThinkCount() {

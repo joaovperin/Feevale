@@ -11,6 +11,7 @@ package br.com.jpe.fat.model;
  */
 public class Fork {
 
+    /** a numeric identifier */
     private final int number;
 
     public Fork(int number) {

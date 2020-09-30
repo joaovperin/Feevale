@@ -9,9 +9,9 @@ package br.com.jpe.fat.model;
  *
  * @author Joaov
  */
-public enum PhilosoferStatus {
+public enum PhilosoferAction {
 
-    EATING,
-    THINKING;
+    EAT,
+    THINK;
 
 }

@@ -5,6 +5,7 @@
  */
 package br.com.jpe.fat.model;
 
+import br.com.jpe.fat.utils.SystemUtils;
 import java.util.Optional;
 
 /**
@@ -49,29 +50,56 @@ public class SatPhilosofer extends Philosofer implements Runnable {
         this.right = Optional.of(right);
     }
 
+    /**
+     * Thread method
+     */
     @Override
     public void run() {
         // loops while he is alive
         while (this.alive) {
-            // case he was thinking, try to eat
-            if (PhilosoferStatus.THINKING.equals(this.status)) {
-                final SatPhilosofer leftNeighbour = this.getLeft().get();
-                final SatPhilosofer rightNeighbour = this.getRight().get();
+            doLogic();
+        }
+        SystemUtils.printf("%04d:>\t'%s' is dead, so he cannot eat nor think anymore.", actionCount.incrementAndGet(), getName());
+    }
 
-                // awaits until the left neighbour is thinking and grab his fork
-                while (!leftNeighbour.isThinking());
-                synchronized (leftFork) {
-                    // awaits until the right neighbour is thinking and grab his fork
-                    while (!rightNeighbour.isThinking());
-                    synchronized (rightFork) {
-                        // the neightbours are thinking, the forks are with me, so I can eat
-                        eat(String.format("with forks %2d and %2d", leftFork.getNumber(), rightFork.getNumber()));
-                    }
+    /**
+     * Here is the logic that you're looking for ;)
+     *
+     * This runs on an eternal loop
+     */
+    private void doLogic() {
+        // if the philosofer has to think, simply think
+        if (PhilosoferAction.THINK.equals(this.nextAction)) {
+            think();
+            return;
+        }
+
+        // the philosofer has to eat.
+        final SatPhilosofer leftNeighbour = this.getLeft().get();
+        final SatPhilosofer rightNeighbour = this.getRight().get();
+
+        // if the neighbours are eating, the forks are busy, so he may think
+        if (leftNeighbour.isEating() || rightNeighbour.isEating()) {
+            this.nextAction = PhilosoferAction.THINK;
+            return;
+        }
+
+        // grab the left fork
+        synchronized (leftFork) {
+            // if the neighbours are eating, the forks are busy, so drop the fork and set to think on the next tick
+            if (leftNeighbour.isEating() || rightNeighbour.isEating()) {
+                this.nextAction = PhilosoferAction.THINK;
+                return;
+            }
+            // grab the right fork
+            synchronized (rightFork) {
+                // if the neighbours are eating, the forks are busy, so drop the fork and set to think on the next tick
+                if (leftNeighbour.isEating() || rightNeighbour.isEating()) {
+                    this.nextAction = PhilosoferAction.THINK;
+                    return;
                 }
-            } else {
-                // if he cannot eat, keeps thinking
-                think();
-
+                // the neightbours are thinking, the forks are with me, so I can eat
+                eat(String.format("with forks %2d and %2d", leftFork.getNumber(), rightFork.getNumber()));
             }
         }
     }

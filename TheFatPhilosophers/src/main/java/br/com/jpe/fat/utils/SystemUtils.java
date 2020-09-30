@@ -5,30 +5,29 @@
  */
 package br.com.jpe.fat.utils;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
- *
- * @author Joaov
+ * System utilities
  */
 public class SystemUtils {
 
-    private static final boolean DEBUG = true;
-
-    public static final List<String> buffer = new ArrayList<>();
-
+    /**
+     * Formatted (and centralized) print
+     *
+     * @param message
+     * @param args
+     */
     public static void printf(String message, Object... args) {
-        if (DEBUG) {
-            System.out.printf("%s\n", String.format(message, args));
-        } else {
-            buffer.add(String.format(message, args));
-        }
+        System.out.printf("%s\n", String.format(message, args));
     }
 
-    public static void sleep(int n) {
+    /**
+     * Sleep without needing a try/catch block
+     *
+     * @param timeInMs
+     */
+    public static void sleep(int timeInMs) {
         try {
-            Thread.sleep(n);
+            Thread.sleep(timeInMs);
         } catch (InterruptedException ex) {
         }
     }

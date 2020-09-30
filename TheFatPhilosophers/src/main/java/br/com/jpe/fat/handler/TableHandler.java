@@ -22,6 +22,11 @@ public class TableHandler {
         this.philosofers = new ArrayList<>();
     }
 
+    /**
+     * Adds a philosofer to the table and set the neighbours
+     *
+     * @param philosofer
+     */
     public void addPhilosofer(SatPhilosofer philosofer) {
         int listSize = this.philosofers.size();
         // Set neightbours
@@ -37,6 +42,11 @@ public class TableHandler {
         first.setLeft(philosofer);
     }
 
+    /**
+     * Start the logic
+     *
+     * @param timeToRun
+     */
     public void startParanaues(int timeToRun) {
         // starts all the threads
         philosofers.stream().map(e -> new Thread(e)).forEach(thread -> thread.start());
@@ -45,6 +55,9 @@ public class TableHandler {
         philosofers.stream().forEach(guy -> guy.die());
     }
 
+    /**
+     * Print all the positions on the table
+     */
     public void printTablePosition() {
         var i = 0;
         for (var e : philosofers) {
@@ -56,6 +69,9 @@ public class TableHandler {
         }
     }
 
+    /**
+     * Print the results report
+     */
     public void printResults() {
         var i = 0;
         for (var e : philosofers) {
