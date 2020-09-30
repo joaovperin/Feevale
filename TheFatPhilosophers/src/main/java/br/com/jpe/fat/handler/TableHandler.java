@@ -37,13 +37,12 @@ public class TableHandler {
         first.setLeft(philosofer);
     }
 
-    public void startParanaues() {
+    public void startParanaues(int timeToRun) {
         // starts all the threads
         philosofers.stream().map(e -> new Thread(e)).forEach(thread -> thread.start());
-        SystemUtils.sleep(2017);
+        SystemUtils.sleep(timeToRun);
         // kill all the philosofers
         philosofers.stream().forEach(guy -> guy.die());
-        SystemUtils.sleep(500);
     }
 
     public void printTablePosition() {

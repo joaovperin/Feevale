@@ -35,24 +35,14 @@ public class Main {
         System.out.println("Table disposition:");
         table.printTablePosition();
 
-        System.out.println("Running...");
-
-        table.startParanaues();
-        System.out.println("Finished! See the report below:");
+        System.out.println("\nRunning...");
 
         System.out.println("ACTION_ID\tMESSAGE");
-        SystemUtils.buffer.stream().sorted((String me, String you) -> {
-            try {
-                int iMe = Integer.parseInt(me.substring(0, 4).trim());
-                int iYou = Integer.parseInt(you.substring(0, 4).trim());
-                return iMe - iYou;
-            } catch (Exception e) {
-                return 0;
-            }
-        }).forEach(str -> {
-            System.out.println(str);
-        });
+        table.startParanaues(2517);
+//        table.startParanaues(19017);
+        SystemUtils.sleep(200);
 
+        System.out.println("\nFinished! See the report below:");
         table.printResults();
 
     }

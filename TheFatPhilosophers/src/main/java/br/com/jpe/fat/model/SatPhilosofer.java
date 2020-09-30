@@ -58,12 +58,14 @@ public class SatPhilosofer extends Philosofer implements Runnable {
                 final SatPhilosofer leftNeighbour = this.getLeft().get();
                 final SatPhilosofer rightNeighbour = this.getRight().get();
 
-                // if the neightbours are thinking, the forks are idle so he can eat
+                // awaits until the left neighbour is thinking and grab his fork
+                while (!leftNeighbour.isThinking());
                 synchronized (leftFork) {
+                    // awaits until the right neighbour is thinking and grab his fork
+                    while (!rightNeighbour.isThinking());
                     synchronized (rightFork) {
-                        if (leftNeighbour.isThinking() && rightNeighbour.isThinking()) {
-                            eat(String.format("with forks %2d and %2d", leftFork.getNumber(), rightFork.getNumber()));
-                        }
+                        // the neightbours are thinking, the forks are with me, so I can eat
+                        eat(String.format("with forks %2d and %2d", leftFork.getNumber(), rightFork.getNumber()));
                     }
                 }
             } else {

@@ -14,7 +14,7 @@ import java.util.List;
  */
 public class SystemUtils {
 
-    private static final boolean DEBUG = false;
+    private static final boolean DEBUG = true;
 
     public static final List<String> buffer = new ArrayList<>();
 
