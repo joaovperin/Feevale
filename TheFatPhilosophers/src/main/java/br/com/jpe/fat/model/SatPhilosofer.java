@@ -79,7 +79,7 @@ public class SatPhilosofer extends Philosofer implements Runnable {
         final SatPhilosofer rightNeighbour = this.getRight().get();
 
         // if the neighbours are eating, the forks are busy, so he may think
-        if (leftNeighbour.isEating() || rightNeighbour.isEating()) {
+        if (leftNeighbour.isEating()) {
             this.nextAction = PhilosoferAction.THINK;
             return;
         }
@@ -87,7 +87,7 @@ public class SatPhilosofer extends Philosofer implements Runnable {
         // grab the left fork
         synchronized (leftFork) {
             // if the neighbours are eating, the forks are busy, so drop the fork and set to think on the next tick
-            if (leftNeighbour.isEating() || rightNeighbour.isEating()) {
+            if (rightNeighbour.isEating()) {
                 this.nextAction = PhilosoferAction.THINK;
                 return;
             }
