@@ -1,0 +1,7 @@
+br\com\jpe\fat\model\Fork.class
+br\com\jpe\fat\model\PhilosoferAction.class
+br\com\jpe\fat\model\SatPhilosofer.class
+br\com\jpe\fat\model\Philosofer.class
+br\com\jpe\fat\utils\SystemUtils.class
+br\com\jpe\fat\Main.class
+br\com\jpe\fat\handler\TableHandler.class
