@@ -2,7 +2,7 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <groupId>br.com.jpe</groupId>
-    <artifactId>TheFatPhilosophers</artifactId>
+    <artifactId>SantaClausProject</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
     <properties>
@@ -10,18 +10,4 @@
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
-    
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.codehaus.mojo</groupId>
-                <artifactId>exec-maven-plugin</artifactId>
-                <version>1.2.1</version>
-                <configuration>
-                    <mainClass>br.com.jpe.fat.Main</mainClass>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
-    
 </project>
