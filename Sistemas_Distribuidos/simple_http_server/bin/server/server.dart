@@ -65,3 +65,10 @@ class AppServer {
     print('Done !');
   }
 }
+
+// String resp = "HTTP/1.1 200 OK\n" +
+//                             "Content-Type: text/html;\n" +
+//                             "Server: Sist.Dist. Server 1.0\n" +
+//                             "Connection: close\n" +
+//                             "Content-Length: 82\n\n" +
+//                             "<html><body><h1>Esta funcionando!!!<br><h2>Servidor Experimental 1.0</body></html>";
