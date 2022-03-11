@@ -4,24 +4,23 @@ import 'dart:typed_data';
 ///
 /// GET request example:
 ///
-/// GET /api/twa/game-accounts?account=2738 HTTP/1.1
-/// Host: tw-assistant.vercel.app
+/// GET /api/game-accounts?account=2738 HTTP/1.1
+/// Host: my-host.name.com
 /// user-agent: insomnia/2022.1.1
 /// accept: */*
 ///
 /// POST request example:
 ///
-/// POST /api/twa/login HTTP/1.1
-/// Host: tw-assistant.vercel.app
+/// POST /api/login HTTP/2.0
+/// Host: my-host.name.com
 /// user-agent: insomnia/2021.7.2
 /// content-type: application/json
 /// accept: */*
 /// content-length: 97
 ///
 /// {
-/// 	"account": "pA6jPXFNRy0qtt2pdqtD",
-/// 	"token": "epiecXdV0PE8aDgj4Fjs",
-/// 	"runner": "NB-005140"
+/// 	"user": "pA6jPXFNRy0qtt2pdqtD",
+/// 	"password": "epiecXdV0PE8aDgj4Fjs"
 /// }
 ///
 class HttpRequest {
