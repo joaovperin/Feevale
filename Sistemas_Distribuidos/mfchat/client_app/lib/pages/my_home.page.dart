@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:client_app/domain/chat_message.dart';
 import 'package:flutter/material.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -11,49 +12,12 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-const _initialData = <String>[
-  'Hello, fella!',
-  'How are you?',
-  'I\'m fine, thanks.',
-  'What\'s your name?',
-  'My name is Dart.',
-  'How old are you?',
-  'I\'m 29 years old.',
-  'Where are you from?',
-  'I\'m from Russia.',
-  'What\'s your favorite color?',
-  'I\'m blue.',
-  'What\'s your favorite animal?',
-  'I\'m a cat.',
-  'What\'s your favorite food?',
-  'I\'m pizza.',
-  'What\'s your favorite sport?',
-  'I\'m basketball.',
-  'What\'s your favorite TV show?',
-  'I\'m The Simpsons.',
-  'What\'s your favorite movie?',
-  'I\'m The Matrix.',
-  'What\'s your favorite book?',
-  'I\'m The Lord of the Rings.',
-  'What\'s your favorite song?',
-  'I\'m The Beatles.',
-  'What\'s your favorite game?',
-  'I\'m Minecraft.',
-  'What\'s your favorite animal?',
-  'I\'m a dog.',
-  'What\'s your favorite food?',
-  'I\'m sushi.',
-  'What\'s your favorite sport?',
-  'I\'m football.',
-];
-
 class _MyHomePageState extends State<MyHomePage> {
   late TextEditingController _textController;
-  late StreamController<String> _streamController;
   late ScrollController _scrollController;
   late FocusNode _focusNode;
 
-  final _messages = [..._initialData];
+  final List<ChatMessage> _messages = <ChatMessage>[];
 
   @override
   void initState() {
@@ -61,26 +25,26 @@ class _MyHomePageState extends State<MyHomePage> {
     _textController = TextEditingController();
     _scrollController = ScrollController();
     _focusNode = FocusNode();
-    _streamController = StreamController<String>.broadcast();
 
-    _streamController.stream.listen((message) {
-      _textController.clear();
-      if (message.trim().isEmpty) {
-        return;
-      }
+    ChatMessageRepository().firstLoad().then((messages) {
       setState(() {
-        _messages.add(message.trim());
+        _messages.addAll(messages);
       });
-      _focusNode.requestFocus();
-      Future.delayed(const Duration(milliseconds: 300))
-          .then((_) => _scrollDown());
+    });
+
+    ChatMessageRepository().onMessage().listen((msg) {
+      setState(() {
+        _messages.add(msg);
+        _focusNode.requestFocus();
+        Future.delayed(const Duration(milliseconds: 240))
+            .then((_) => _scrollDown());
+      });
     });
   }
 
   @override
   void dispose() {
     _textController.dispose();
-    _streamController.close();
     _scrollController.dispose();
     _focusNode.dispose();
     super.dispose();
@@ -92,6 +56,15 @@ class _MyHomePageState extends State<MyHomePage> {
       duration: const Duration(milliseconds: 400),
       curve: Curves.fastOutSlowIn,
     );
+  }
+
+  void _sendMessage(String message) {
+    if (message.trim().isEmpty) {
+      return;
+    }
+    final _chatMessage = ChatMessage(message.trim());
+    ChatMessageRepository().send(_chatMessage);
+    _textController.clear();
   }
 
   @override
@@ -113,10 +86,10 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 child: ListView.separated(
                   controller: _scrollController,
-                  itemCount: _messages.length,
+                  itemCount: _messages!.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
-                    return Text(_messages[index]);
+                    return Text(_messages[index].text);
                   },
                 ),
               ),
@@ -132,7 +105,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   controller: _textController,
                   focusNode: _focusNode,
                   onFieldSubmitted: (value) {
-                    _streamController.add(_textController.text);
+                    _sendMessage(_textController.text);
                   },
                   decoration: InputDecoration(
                     border: const OutlineInputBorder(),
@@ -141,7 +114,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       icon: const Icon(Icons.send),
                       tooltip: 'Send',
                       onPressed: () {
-                        _streamController.add(_textController.text);
+                        _sendMessage(_textController.text);
                       },
                     ),
                   ),
