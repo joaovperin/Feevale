@@ -1,123 +1,103 @@
-import 'dart:convert';
 import 'dart:io';
-import 'dart:typed_data';
 
-import 'package:uuid/uuid.dart';
+import 'domain/app_client.dart';
+import 'domain/app_message.dart';
+import 'domain/messages/connected_message.dart';
+import 'domain/messages/disconnected_message.dart';
+import 'domain/messages/text_message.dart';
 
 const port = 8080;
-final _allClients = <ConnectedClient>[];
+final repository = AppClientRepository();
 
 Future<void> main(List<String> arguments) async {
   print('Trying to start server at port $port....');
 
   final server = await ServerSocket.bind(
     InternetAddress.anyIPv4,
-    8080,
+    port,
     shared: true,
   );
 
   server.listen((Socket socket) {
-    socket.first.then((firstMessage) {
-      final _connectedData = ConnectedMessage.fromBytes(firstMessage);
+    socket.listen((bytes) {
+      final message = AppMessage.fromBytes(bytes);
 
-      final client = ConnectedClient(socket, nickname: _connectedData.nickname);
-
-      if (_allClients.any((e) => e.nickname == _connectedData.nickname)) {
-        client.sendMessage('Nickname already taken!');
-        return;
+      if (message is ConnectedMessage) {
+        onSocketConnected(socket, message);
+      } else if (message is TextMessage) {
+        onSocketTextMessage(socket, message);
+      } else if (message is DisconnectedMessage) {
+        onSocketDisconnected(socket, message);
+      } else {
+        print('Unknown message type: ${message.runtimeType}');
       }
-
-      print('Client connected: ${client.describe}');
-      _allClients.add(client);
-
-      socket.listen((message) {
-        final msg = ChatMessage.fromBytes(message);
-        client.onMessage(msg);
-      }, onDone: () {
-        print('Client disconnected: ${client.describe}');
-        client.onDisconnect();
-        _allClients.remove(client);
-      });
+    }, onDone: () {
+      onSocketDone(socket);
+    }, onError: (err, stack) {
+      onSocketError(socket, err, stack);
     });
   });
 
-  print('Server started!');
+  print('Server started @$port!');
 }
 
-class ConnectedClient {
-  final String id;
-  final Socket socket;
-  String nickname;
+void onSocketConnected(Socket socket, ConnectedMessage message) {
+  final client = AppClient.create(socket, nickname: message.data.nickname);
 
-  ConnectedClient(
-    this.socket, {
-    required this.nickname,
-  }) : id = Uuid().v4();
-
-  String get addr => '${socket.remoteAddress.address}:${socket.remotePort}';
-  String get describe => addr;
-
-  void onMessage(ChatMessage message) {
-    print('Received data: ${message.text}');
-    if (message.text == '111') {
-      sendMessage('222');
-    } else if (message.text == '222') {
-      sendMessage('333');
-    } else if (message.text == '333') {
-      sendMessage('444');
-    } else if (message.text == '444') {
-      sendMessage('555');
-    } else if (message.text == '555') {
-      sendMessage('666');
-    } else if (message.text == '666') {
-      sendMessage('777');
-    } else if (message.text == '777') {
-      sendMessage('888');
-    } else if (message.text == '888') {
-      sendMessage('999');
-    } else if (message.text == '999') {
-      sendMessage('000');
-    } else if (message.text == '000') {
-      sendMessage('111');
-    } else {
-      sendMessage('FOR YOU TOO: ${message.text}');
-    }
+  if (repository.existsByNickname(client.nickname)) {
+    print('nickname ${client.nickname} already taken!');
+    return;
   }
 
-  void sendMessage(String text) {
-    final msg = ChatMessage(text);
-    socket.write(msg.toBytes());
-  }
-
-  void onDisconnect() {
-    socket.close();
-    socket.destroy();
-  }
+  repository.add(client);
+  print('Client connected: ${client.describe}');
 }
 
-class ConnectedMessage {
-  final String nickname;
-
-  ConnectedMessage(this.nickname);
-
-  factory ConnectedMessage.fromBytes(Uint8List bytes) {
-    final json = jsonDecode(String.fromCharCodes(bytes));
-    return ConnectedMessage(json['nickname'] as String);
+void onSocketTextMessage(Socket socket, TextMessage message) {
+  AppClient? client = repository.findByNickname(message.data.from);
+  if (client == null) {
+    print('Client not found: ${message.data.from}');
+    return;
   }
+
+  AppClient? toClient = repository.findByNickname(message.data.to);
+  if (toClient == null) {
+    print('Client not found: ${message.data.to}');
+    return;
+  }
+
+  toClient.send(TextMessage(
+    TextData(
+      from: client.nickname,
+      to: toClient.nickname,
+      content: message.data.content,
+    ),
+  ));
 }
 
-class ChatMessage {
-  final String text;
+void onSocketDisconnected(Socket socket, DisconnectedMessage message) {
+  final client = repository.findByNickname(message.data.nickname);
 
-  const ChatMessage(this.text);
-
-  factory ChatMessage.fromBytes(Uint8List bytes) {
-    final json = jsonDecode(String.fromCharCodes(bytes));
-    return ChatMessage(json['text'] as String);
+  if (client == null) {
+    print('Client not found: ${message.data.nickname}');
+    return;
   }
 
-  List<int> toBytes() {
-    final json = {'text': text};
-    return utf8.encode(jsonEncode(json));
-  }
+  repository.remove(client);
+  print('Client disconnected: ${client.describe}');
+}
+
+void onSocketDone(Socket socket) {
+  print('onDone!! ');
+  repository.findClientsBySocket(socket).forEach((elm) {
+    print('disconnected ${elm.nickname} (DONE)');
+    repository.remove(elm);
+  });
+}
+
+void onSocketError(Socket socket, err, stack) {
+  repository.findClientsBySocket(socket).forEach((elm) {
+    print('disconnected ${elm.nickname} (DONE)');
+    repository.remove(elm);
+  });
 }
