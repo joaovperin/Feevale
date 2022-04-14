@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:client_app/domain/chat_message.dart';
 import 'package:flutter/material.dart';
 
-class ChatRoomPage extends StatefulWidget {
-  const ChatRoomPage({Key? key}) : super(key: key);
+class ChatRoomWithAdsPage extends StatefulWidget {
+  const ChatRoomWithAdsPage({Key? key}) : super(key: key);
 
   final String chatroomName = 'MfChat - Main room';
 
   @override
-  State<ChatRoomPage> createState() => _ChatRoomPageState();
+  State<ChatRoomWithAdsPage> createState() => _ChatRoomWithAdsPageState();
 }
 
-class _ChatRoomPageState extends State<ChatRoomPage> {
+class _ChatRoomWithAdsPageState extends State<ChatRoomWithAdsPage> {
   late TextEditingController _textController;
   late ScrollController _scrollController;
   late FocusNode _focusNode;
@@ -112,31 +112,52 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
               ),
             ),
             const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 2),
-              ),
-              child: Form(
-                child: TextFormField(
-                  controller: _textController,
-                  focusNode: _focusNode,
-                  onFieldSubmitted: (value) {
-                    _sendMessage(_textController.text);
-                  },
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Enter text',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.send),
-                      tooltip: 'Send',
-                      onPressed: () {
-                        _sendMessage(_textController.text);
-                      },
+            Row(
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 0, right: 4),
+                  child: Container(
+                    width: 320,
+                    height: 90,
+                    padding: EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 2),
+                    ),
+                    child: Text(
+                      'Compre já nas americanas!!!\nClique aqui e seja feliz',
                     ),
                   ),
                 ),
-              ),
+                Expanded(
+                  child: Container(
+                    padding:
+                        const EdgeInsets.symmetric(vertical: 8, horizontal: 8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 2),
+                    ),
+                    child: Form(
+                      child: TextFormField(
+                        controller: _textController,
+                        focusNode: _focusNode,
+                        onFieldSubmitted: (value) {
+                          _sendMessage(_textController.text);
+                        },
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: 'Enter text',
+                          suffix: IconButton(
+                            icon: const Icon(Icons.send),
+                            tooltip: 'Send',
+                            onPressed: () {
+                              _sendMessage(_textController.text);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
             ),
           ],
         ),
