@@ -3,16 +3,16 @@ import 'dart:async';
 import 'package:client_app/domain/chat_message.dart';
 import 'package:flutter/material.dart';
 
-class MyHomePage extends StatefulWidget {
-  const MyHomePage({Key? key}) : super(key: key);
+class ChatRoomPage extends StatefulWidget {
+  const ChatRoomPage({Key? key}) : super(key: key);
 
-  final String title = 'Simple demo chat';
+  final String chatroomName = 'Simple demo chat';
 
   @override
-  State<MyHomePage> createState() => _MyHomePageState();
+  State<ChatRoomPage> createState() => _ChatRoomPageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _ChatRoomPageState extends State<ChatRoomPage> {
   late TextEditingController _textController;
   late ScrollController _scrollController;
   late FocusNode _focusNode;
@@ -71,7 +71,7 @@ class _MyHomePageState extends State<MyHomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.title),
+        title: Text(widget.chatroomName),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -86,7 +86,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 ),
                 child: ListView.separated(
                   controller: _scrollController,
-                  itemCount: _messages!.length,
+                  itemCount: _messages.length,
                   separatorBuilder: (context, index) => const Divider(),
                   itemBuilder: (context, index) {
                     return Text(_messages[index].text);

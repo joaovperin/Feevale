@@ -1,4 +1,4 @@
-import 'package:client_app/pages/my_home.page.dart';
+import 'package:client_app/pages/chatroom.page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -11,11 +11,11 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'MfChat - Client',
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const MyHomePage(),
+      home: const ChatRoomPage(),
     );
   }
 }
