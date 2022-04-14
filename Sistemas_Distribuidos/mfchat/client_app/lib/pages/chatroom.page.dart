@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 class ChatRoomPage extends StatefulWidget {
   const ChatRoomPage({Key? key}) : super(key: key);
 
-  final String chatroomName = 'Simple demo chat';
+  final String chatroomName = 'MfChat - Main room';
 
   @override
   State<ChatRoomPage> createState() => _ChatRoomPageState();
@@ -37,7 +37,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
         _messages.add(msg);
         _focusNode.requestFocus();
         Future.delayed(const Duration(milliseconds: 240))
-            .then((_) => _scrollDown());
+            .then((_) => _scrollToBottom());
       });
     });
   }
@@ -50,7 +50,7 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
     super.dispose();
   }
 
-  void _scrollDown() {
+  void _scrollToBottom() {
     _scrollController.animateTo(
       _scrollController.position.maxScrollExtent + 99,
       duration: const Duration(milliseconds: 400),
@@ -75,55 +75,154 @@ class _ChatRoomPageState extends State<ChatRoomPage> {
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Expanded(
-              child: Container(
-                padding: const EdgeInsets.all(8),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Colors.black, width: 2),
-                ),
-                child: ListView.separated(
-                  controller: _scrollController,
-                  itemCount: _messages.length,
-                  separatorBuilder: (context, index) => const Divider(),
-                  itemBuilder: (context, index) {
-                    return Text(_messages[index].text);
-                  },
-                ),
-              ),
+        child: Row(
+          children: [
+            const Padding(
+              padding: EdgeInsets.only(right: 4),
+              child: _ChatRoomParticipants(),
             ),
-            const SizedBox(height: 8),
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                border: Border.all(color: Colors.black, width: 2),
-              ),
-              child: Form(
-                child: TextFormField(
-                  controller: _textController,
-                  focusNode: _focusNode,
-                  onFieldSubmitted: (value) {
-                    _sendMessage(_textController.text);
-                  },
-                  decoration: InputDecoration(
-                    border: const OutlineInputBorder(),
-                    labelText: 'Enter text',
-                    suffix: IconButton(
-                      icon: const Icon(Icons.send),
-                      tooltip: 'Send',
-                      onPressed: () {
-                        _sendMessage(_textController.text);
-                      },
+            Expanded(
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                children: <Widget>[
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.all(8),
+                      decoration: BoxDecoration(
+                        border: Border.all(color: Colors.black, width: 2),
+                      ),
+                      child: ListView.separated(
+                        controller: _scrollController,
+                        itemCount: _messages.length,
+                        separatorBuilder: (context, index) => const Divider(),
+                        itemBuilder: (context, index) {
+                          return Text(_messages[index].text);
+                        },
+                      ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 8),
+                  Container(
+                    padding: const EdgeInsets.all(8),
+                    decoration: BoxDecoration(
+                      border: Border.all(color: Colors.black, width: 2),
+                    ),
+                    child: Form(
+                      child: TextFormField(
+                        controller: _textController,
+                        focusNode: _focusNode,
+                        onFieldSubmitted: (value) {
+                          _sendMessage(_textController.text);
+                        },
+                        decoration: InputDecoration(
+                          border: const OutlineInputBorder(),
+                          labelText: 'Enter text',
+                          suffix: IconButton(
+                            icon: const Icon(Icons.send),
+                            tooltip: 'Send',
+                            onPressed: () {
+                              _sendMessage(_textController.text);
+                            },
+                          ),
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
             ),
           ],
         ),
       ),
+      floatingActionButtonLocation: FloatingActionButtonLocation.miniEndFloat,
+      floatingActionButton: Padding(
+        padding: const EdgeInsets.only(bottom: 112),
+        child: FloatingActionButton(
+          tooltip: 'Scroll down',
+          child: const Icon(Icons.arrow_downward),
+          onPressed: () {
+            _scrollToBottom();
+          },
+        ),
+      ),
+    );
+  }
+}
+
+class _ChatRoomParticipants extends StatelessWidget {
+  const _ChatRoomParticipants({
+    Key? key,
+  }) : super(key: key);
+
+  static const _participants = [
+    'Alice',
+    'Bob',
+    'Charlie',
+    'Dave',
+    'Eve',
+    'Frank'
+  ];
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      width: 320,
+      padding: const EdgeInsets.symmetric(vertical: 4, horizontal: 8.0),
+      height: double.infinity,
+      decoration: BoxDecoration(
+        border: Border.all(color: Colors.black, width: 2),
+      ),
+      child: Column(children: [
+        const SizedBox(height: 8),
+        Column(
+          children: [
+            Text('Participants', style: Theme.of(context).textTheme.headline4),
+            Align(
+              alignment: Alignment.centerRight,
+              child: Text('Online: ${_participants.length}',
+                  style: const TextStyle(fontSize: 12)),
+            ),
+          ],
+        ),
+        const Divider(),
+        const SizedBox(height: 48),
+        for (final participant in _participants)
+          _ParticipantWidget(name: participant),
+      ]),
+    );
+  }
+}
+
+class _ParticipantWidget extends StatelessWidget {
+  const _ParticipantWidget({
+    Key? key,
+    required this.name,
+  }) : super(key: key);
+
+  final String name;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      children: [
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: 2),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.center,
+            children: [
+              Text(name),
+              const Spacer(),
+              IconButton(
+                icon: const Icon(Icons.chat_bubble_outline_rounded),
+                tooltip: 'Send message',
+                onPressed: () {},
+              ),
+            ],
+          ),
+        ),
+        const Divider(),
+      ],
     );
   }
 }
