@@ -1,4 +1,4 @@
-import 'package:client_app/pages/chatroom.page.dart';
+import 'package:client_app/pages/home.page.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -15,7 +15,8 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: const ChatRoomPage(),
+      // home: const ChatRoomPage(),
+      home: const HomePage(),
     );
   }
 }
