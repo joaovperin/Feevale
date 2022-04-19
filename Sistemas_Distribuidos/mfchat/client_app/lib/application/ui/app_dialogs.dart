@@ -264,7 +264,9 @@ Widget _createAppButton(
     bool elevated = false}) {
   return elevated
       ? ElevatedButton(
-          child: Text(text), onPressed: () => _popWithResponse(context, action))
+          autofocus: true,
+          child: Text(text),
+          onPressed: () => _popWithResponse(context, action))
       : TextButton(
           child: Text(text),
           onPressed: () => _popWithResponse(context, action));
