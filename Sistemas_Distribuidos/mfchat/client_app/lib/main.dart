@@ -15,10 +15,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      // home: const ChatRoomPage(),
-      // home: const HomePage(),
       initialRoute: AppPages.initialRoute,
       routes: AppPages.routes,
+      debugShowCheckedModeBanner: true,
     );
   }
 }

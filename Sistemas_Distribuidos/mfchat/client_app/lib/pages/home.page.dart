@@ -1,3 +1,6 @@
+import 'dart:math';
+
+import 'package:client_app/application/ui/app_dialogs.dart';
 import 'package:client_app/pages/chatroom-with-ads.page.dart';
 import 'package:flutter/material.dart';
 
@@ -12,7 +15,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late TextEditingController _textController;
   late FocusNode _focusNode;
-  // final Key<Form> _formKey;
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
@@ -29,7 +32,20 @@ class _HomePageState extends State<HomePage> {
   }
 
   void _goToChatroom() {
-    Navigator.of(context).pushNamed(ChatRoomWithAdsPage.routeName);
+    if (!_formKey.currentState!.validate()) {
+      return;
+    }
+    // TODO: validate on backend
+    if (Random().nextBool()) {
+      AppDialogs.error(
+        context,
+        message: 'Username already taken!! Please choose another.',
+      );
+      return;
+    }
+
+    Navigator.of(context).pushNamed(ChatRoomWithAdsPage.routeName,
+        arguments: _textController.text.trim());
   }
 
   @override
@@ -58,6 +74,7 @@ class _HomePageState extends State<HomePage> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: Form(
+                    key: _formKey,
                     child: Column(
                       children: [
                         TextFormField(
@@ -73,7 +90,7 @@ class _HomePageState extends State<HomePage> {
                             }
                             return null;
                           },
-                          onFieldSubmitted: (value) {},
+                          onFieldSubmitted: (_) => _goToChatroom(),
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
                             labelText: 'Nickname',

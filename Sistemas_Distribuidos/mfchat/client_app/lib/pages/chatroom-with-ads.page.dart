@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:client_app/application/infra/scroll_and_drag_scroll_behaviour.dart';
 import 'package:client_app/domain/chat_message.dart';
 import 'package:flutter/material.dart';
 
@@ -73,6 +74,14 @@ class _ChatRoomWithAdsPageState extends State<ChatRoomWithAdsPage> {
     return Scaffold(
       appBar: AppBar(
         title: Text('MfChat - ${widget.chatroomName}'),
+        automaticallyImplyLeading: false,
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.logout),
+            tooltip: 'Logout',
+            onPressed: () => Navigator.of(context).pop(),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
@@ -95,14 +104,16 @@ class _ChatRoomWithAdsPageState extends State<ChatRoomWithAdsPage> {
                             decoration: BoxDecoration(
                               border: Border.all(color: Colors.black, width: 2),
                             ),
-                            child: ListView.separated(
-                              controller: _scrollController,
-                              itemCount: _messages.length,
-                              separatorBuilder: (context, index) =>
-                                  const Divider(),
-                              itemBuilder: (context, index) {
-                                return Text(_messages[index].text);
-                              },
+                            child: ScrollAndDragScrollBehavior.config(
+                              child: ListView.separated(
+                                controller: _scrollController,
+                                itemCount: _messages.length,
+                                separatorBuilder: (context, index) =>
+                                    const Divider(),
+                                itemBuilder: (context, index) {
+                                  return Text(_messages[index].text);
+                                },
+                              ),
                             ),
                           ),
                         ),
@@ -116,15 +127,15 @@ class _ChatRoomWithAdsPageState extends State<ChatRoomWithAdsPage> {
             Row(
               children: [
                 Padding(
-                  padding: EdgeInsets.only(left: 0, right: 4),
+                  padding: const EdgeInsets.only(left: 0, right: 4),
                   child: Container(
                     width: 320,
                     height: 90,
-                    padding: EdgeInsets.all(8),
+                    padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
                       border: Border.all(color: Colors.black, width: 2),
                     ),
-                    child: Text(
+                    child: const Text(
                       'Compre já nas americanas!!!\nClique aqui e seja feliz',
                     ),
                   ),
@@ -189,7 +200,12 @@ class _ChatRoomParticipants extends StatelessWidget {
     'Charlie',
     'Dave',
     'Eve',
-    'Frank'
+    'Frank',
+    'Grace',
+    'Heidi',
+    'Iris',
+    'Jack',
+    'Kathy',
   ];
 
   @override
@@ -200,23 +216,28 @@ class _ChatRoomParticipants extends StatelessWidget {
       decoration: BoxDecoration(
         border: Border.all(color: Colors.black, width: 2),
       ),
-      child: Column(children: [
-        const SizedBox(height: 8),
-        Column(
-          children: [
-            Text('Participants', style: Theme.of(context).textTheme.headline4),
-            Align(
-              alignment: Alignment.centerRight,
-              child: Text('Online: ${_participants.length}',
-                  style: const TextStyle(fontSize: 12)),
+      child: ScrollAndDragScrollBehavior.config(
+        child: SingleChildScrollView(
+          child: Column(children: [
+            const SizedBox(height: 8),
+            Column(
+              children: [
+                Text('Participants',
+                    style: Theme.of(context).textTheme.headline4),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: Text('Online: ${_participants.length}',
+                      style: const TextStyle(fontSize: 12)),
+                ),
+              ],
             ),
-          ],
+            const Divider(),
+            const SizedBox(height: 48),
+            for (final participant in _participants)
+              _ParticipantWidget(name: participant),
+          ]),
         ),
-        const Divider(),
-        const SizedBox(height: 48),
-        for (final participant in _participants)
-          _ParticipantWidget(name: participant),
-      ]),
+      ),
     );
   }
 }
