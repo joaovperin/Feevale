@@ -1,4 +1,4 @@
-import 'package:client_app/pages/home.page.dart';
+import 'package:client_app/app_pages.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -16,7 +16,9 @@ class MyApp extends StatelessWidget {
         primarySwatch: Colors.blue,
       ),
       // home: const ChatRoomPage(),
-      home: const HomePage(),
+      // home: const HomePage(),
+      initialRoute: AppPages.initialRoute,
+      routes: AppPages.routes,
     );
   }
 }

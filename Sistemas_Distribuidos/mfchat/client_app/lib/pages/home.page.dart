@@ -1,6 +1,8 @@
+import 'package:client_app/pages/chatroom-with-ads.page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
+  static const routeName = '/';
   const HomePage({Key? key}) : super(key: key);
 
   @override
@@ -10,6 +12,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   late TextEditingController _textController;
   late FocusNode _focusNode;
+  // final Key<Form> _formKey;
 
   @override
   void initState() {
@@ -23,6 +26,10 @@ class _HomePageState extends State<HomePage> {
     _textController.dispose();
     _focusNode.dispose();
     super.dispose();
+  }
+
+  void _goToChatroom() {
+    Navigator.of(context).pushNamed(ChatRoomWithAdsPage.routeName);
   }
 
   @override
@@ -87,7 +94,7 @@ class _HomePageState extends State<HomePage> {
                                 Icon(Icons.login),
                               ],
                             ),
-                            onPressed: () {},
+                            onPressed: _goToChatroom,
                           ),
                         ),
                       ],

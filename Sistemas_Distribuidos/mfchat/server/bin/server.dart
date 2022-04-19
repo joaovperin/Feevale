@@ -91,13 +91,13 @@ void onSocketDone(Socket socket) {
   print('onDone!! ');
   repository.findClientsBySocket(socket).forEach((elm) {
     print('disconnected ${elm.nickname} (DONE)');
-    repository.remove(elm);
+    // repository.remove(elm);
   });
 }
 
 void onSocketError(Socket socket, err, stack) {
   repository.findClientsBySocket(socket).forEach((elm) {
-    print('disconnected ${elm.nickname} (DONE)');
-    repository.remove(elm);
+    print('disconnected ${elm.nickname} (ERROR)');
+    // repository.remove(elm);
   });
 }

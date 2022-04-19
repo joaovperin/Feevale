@@ -4,9 +4,10 @@ import 'package:client_app/domain/chat_message.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoomWithAdsPage extends StatefulWidget {
+  static const routeName = '/chatroom';
   const ChatRoomWithAdsPage({Key? key}) : super(key: key);
 
-  final String chatroomName = 'MfChat - Main room';
+  final String chatroomName = 'Main room';
 
   @override
   State<ChatRoomWithAdsPage> createState() => _ChatRoomWithAdsPageState();
@@ -71,7 +72,7 @@ class _ChatRoomWithAdsPageState extends State<ChatRoomWithAdsPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text(widget.chatroomName),
+        title: Text('MfChat - ${widget.chatroomName}'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(8.0),
