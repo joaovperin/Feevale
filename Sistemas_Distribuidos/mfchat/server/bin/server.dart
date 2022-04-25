@@ -1,13 +1,14 @@
+import 'dart:convert';
 import 'dart:io';
 
-import 'domain/app_client.dart';
+import 'chat_service.dart';
 import 'domain/app_message.dart';
 import 'domain/messages/connected_message.dart';
 import 'domain/messages/disconnected_message.dart';
+import 'domain/messages/request_sync_message.dart';
 import 'domain/messages/text_message.dart';
 
-const port = 8080;
-final repository = AppClientRepository();
+const port = 8100;
 
 Future<void> main(List<String> arguments) async {
   print('Trying to start server at port $port....');
@@ -19,8 +20,46 @@ Future<void> main(List<String> arguments) async {
   );
 
   server.listen((Socket socket) {
+    final Map<Socket, List<int>> _buffer = {};
     socket.listen((bytes) {
-      final message = AppMessage.fromBytes(bytes);
+      _buffer[socket] ??= [];
+      final buff = _buffer[socket]!;
+      buff.addAll(bytes);
+
+      if (buff.length < 12) {
+        return;
+      }
+      final jsonSizePart = int.parse(String.fromCharCodes(buff.sublist(0, 8)));
+      if (buff.length < (jsonSizePart + 12)) {
+        return;
+      }
+
+      final _messageBuffer = [...buff];
+      buff.clear();
+      final typePart =
+          int.parse(String.fromCharCodes(_messageBuffer.sublist(9, 11)));
+      final jsonMessage =
+          utf8.decode(_messageBuffer.sublist(12, 12 + jsonSizePart));
+      final type = AppMessageType.values[typePart];
+
+      AppMessage message;
+      switch (type) {
+        case AppMessageType.connected:
+          message = ConnectedMessage.parse(jsonMessage);
+          break;
+        case AppMessageType.text:
+          message = TextMessage.parse(jsonMessage);
+          break;
+        case AppMessageType.disconnected:
+          message = DisconnectedMessage.parse(jsonMessage);
+          break;
+        case AppMessageType.requestSync:
+          message = RequestSyncMessage.parse(jsonMessage);
+          break;
+        default:
+          print('invalid message type $type, ignoring!');
+          return;
+      }
 
       if (message is ConnectedMessage) {
         onSocketConnected(socket, message);
@@ -28,6 +67,8 @@ Future<void> main(List<String> arguments) async {
         onSocketTextMessage(socket, message);
       } else if (message is DisconnectedMessage) {
         onSocketDisconnected(socket, message);
+      } else if (message is RequestSyncMessage) {
+        onSocketRequestSync(socket, message);
       } else {
         print('Unknown message type: ${message.runtimeType}');
       }
@@ -39,65 +80,4 @@ Future<void> main(List<String> arguments) async {
   });
 
   print('Server started @$port!');
-}
-
-void onSocketConnected(Socket socket, ConnectedMessage message) {
-  final client = AppClient.create(socket, nickname: message.data.nickname);
-
-  if (repository.existsByNickname(client.nickname)) {
-    print('nickname ${client.nickname} already taken!');
-    return;
-  }
-
-  repository.add(client);
-  print('Client connected: ${client.describe}');
-}
-
-void onSocketTextMessage(Socket socket, TextMessage message) {
-  AppClient? client = repository.findByNickname(message.data.from);
-  if (client == null) {
-    print('Client not found: ${message.data.from}');
-    return;
-  }
-
-  AppClient? toClient = repository.findByNickname(message.data.to);
-  if (toClient == null) {
-    print('Client not found: ${message.data.to}');
-    return;
-  }
-
-  toClient.send(TextMessage(
-    TextData(
-      from: client.nickname,
-      to: toClient.nickname,
-      content: message.data.content,
-    ),
-  ));
-}
-
-void onSocketDisconnected(Socket socket, DisconnectedMessage message) {
-  final client = repository.findByNickname(message.data.nickname);
-
-  if (client == null) {
-    print('Client not found: ${message.data.nickname}');
-    return;
-  }
-
-  repository.remove(client);
-  print('Client disconnected: ${client.describe}');
-}
-
-void onSocketDone(Socket socket) {
-  print('onDone!! ');
-  repository.findClientsBySocket(socket).forEach((elm) {
-    print('disconnected ${elm.nickname} (DONE)');
-    // repository.remove(elm);
-  });
-}
-
-void onSocketError(Socket socket, err, stack) {
-  repository.findClientsBySocket(socket).forEach((elm) {
-    print('disconnected ${elm.nickname} (ERROR)');
-    // repository.remove(elm);
-  });
 }

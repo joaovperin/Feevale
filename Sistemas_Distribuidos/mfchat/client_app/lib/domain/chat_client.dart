@@ -8,5 +8,9 @@ abstract class ChatClientRepository {
 }
 
 class ChatClient {
+  final String nickname;
 
+  const ChatClient({
+    required this.nickname,
+  });
 }

@@ -45,6 +45,10 @@ class AppClientRepository {
     _allClients.remove(client);
   }
 
+  List<AppClient> listClients() {
+    return [..._allClients];
+  }
+
   List<AppClient> findClientsBySocket(Socket socket) {
     return _allClients.where((client) => client.socket == socket).toList();
   }

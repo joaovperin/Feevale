@@ -1,7 +1,6 @@
-import 'dart:math';
-
 import 'package:client_app/application/ui/app_dialogs.dart';
-import 'package:client_app/pages/chatroom-with-ads.page.dart';
+import 'package:client_app/domain/auth/auth_provider.dart';
+import 'package:client_app/pages/chatroom/chatroom.page.dart';
 import 'package:flutter/material.dart';
 
 class HomePage extends StatefulWidget {
@@ -14,20 +13,17 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   late TextEditingController _textController;
-  late FocusNode _focusNode;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
     _textController = TextEditingController();
-    _focusNode = FocusNode();
   }
 
   @override
   void dispose() {
     _textController.dispose();
-    _focusNode.dispose();
     super.dispose();
   }
 
@@ -35,17 +31,18 @@ class _HomePageState extends State<HomePage> {
     if (!_formKey.currentState!.validate()) {
       return;
     }
-    // TODO: validate on backend
-    if (Random().nextBool()) {
+
+    final nickname = _textController.text.trim();
+    AppAuthProvider.of(context).loginViaNickname(nickname).then((_) {
+      Navigator.of(context).pushNamed(ChatroomPage.routeName);
+    }).catchError((err) {
+      // AppDialogs.showErrorDialog(context, err.toString());
+      // todo: fix msg
       AppDialogs.error(
         context,
         message: 'Username already taken!! Please choose another.',
       );
-      return;
-    }
-
-    Navigator.of(context).pushNamed(ChatRoomWithAdsPage.routeName,
-        arguments: _textController.text.trim());
+    });
   }
 
   @override
@@ -79,7 +76,7 @@ class _HomePageState extends State<HomePage> {
                       children: [
                         TextFormField(
                           controller: _textController,
-                          focusNode: _focusNode,
+                          autofocus: true,
                           maxLength: 20,
                           validator: (String? value) {
                             if (value == null || value.isEmpty) {
@@ -87,6 +84,9 @@ class _HomePageState extends State<HomePage> {
                             }
                             if (value.length < 4) {
                               return 'Nickname must be at least 4 characters long';
+                            }
+                            if (const ['all'].contains(value)) {
+                              return 'Nickname "$value" is not allowed!';
                             }
                             return null;
                           },
