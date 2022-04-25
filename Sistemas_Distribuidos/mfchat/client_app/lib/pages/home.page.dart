@@ -1,4 +1,5 @@
 import 'package:client_app/application/ui/app_dialogs.dart';
+import 'package:client_app/application/ui/app_loading_service.dart';
 import 'package:client_app/domain/auth/auth_provider.dart';
 import 'package:client_app/pages/chatroom/chatroom.page.dart';
 import 'package:flutter/material.dart';
@@ -33,15 +34,15 @@ class _HomePageState extends State<HomePage> {
     }
 
     final nickname = _textController.text.trim();
+
+    final _loader = AppLoading.show(context);
+
     AppAuthProvider.of(context).loginViaNickname(nickname).then((_) {
+      _loader.close();
       Navigator.of(context).pushNamed(ChatroomPage.routeName);
     }).catchError((err) {
-      // AppDialogs.showErrorDialog(context, err.toString());
-      // todo: fix msg
-      AppDialogs.error(
-        context,
-        message: 'Username already taken!! Please choose another.',
-      );
+      _loader.close();
+      AppDialogs.error(context, message: err.toString());
     });
   }
 

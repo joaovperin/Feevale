@@ -2,7 +2,8 @@ import 'dart:convert';
 
 enum AppEventType {
   sync,
-  textMessage
+  textMessage,
+  error,
 }
 
 class AppEvent {
@@ -14,12 +15,10 @@ class AppEvent {
   factory AppEvent.sync(List<String> connectedNicknames) =>
       AppEvent._(AppEventType.sync, data: connectedNicknames);
 
-  List<int> toBytes() {
-    // final map = toMap();
-    // final string = json.encode(map);
-    // final bytes = utf8.encode(string);
-    // return bytes;
+  factory AppEvent.error(String cause) =>
+      AppEvent._(AppEventType.error, data: cause);
 
+  List<int> toBytes() {
     final jsonData = json.encode(data);
 
     final jsonSizePart = jsonData.length.toString().padLeft(8, '0');

@@ -12,6 +12,7 @@ abstract class AppChatRepository {
 
   Stream<AppChatMessage> onMessage();
   Stream<AppSyncData> onSync();
+  Stream<AppErrorData> onError();
 }
 
 class AppChatMessage {
@@ -53,5 +54,16 @@ class AppSyncData {
     return AppSyncData(
       List<String>.from(data.map((e) => e as String)),
     );
+  }
+}
+
+class AppErrorData {
+  final String cause;
+
+  const AppErrorData(this.cause);
+
+  factory AppErrorData.fromJson(String json) {
+    final data = jsonDecode(json);
+    return AppErrorData(data);
   }
 }

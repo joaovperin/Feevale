@@ -24,6 +24,11 @@ void onSocketConnected(Socket socket, ConnectedMessage message) {
 
   if (clientsRepository.existsByNickname(client.nickname)) {
     print('nickname ${client.nickname} already taken!');
+    socket.add(
+      AppEvent.error(
+        'Nickname ${client.nickname} is already taken! Please choose another one.',
+      ).toBytes(),
+    );
     return;
   }
 

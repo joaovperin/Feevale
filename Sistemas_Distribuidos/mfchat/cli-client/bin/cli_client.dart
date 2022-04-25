@@ -28,8 +28,45 @@ Future<void> main(List<String> arguments) async {
     print('***-> TYPE: $typePart, $jsonMessage <-***');
   });
 
-  await sendMessage(conn, MsgType.connect, {'nickname': 'foo'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'joao'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'perin'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'mariazinha'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'julia'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'carlos'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'estefani'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'eduardo'});
 
+  await sendMessage(
+    conn,
+    MsgType.text,
+    {'from': 'eduardo', 'to': 'all', 'content': 'Oi galerinha!'},
+  );
+
+  await sendMessage(conn, MsgType.connect, {'nickname': 'fulana'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'alana'});
+
+  await sendMessage(
+    conn,
+    MsgType.text,
+    {'from': 'alana', 'to': 'joao', 'content': 'Oii cara :D'},
+  );
+
+  await sendMessage(conn, MsgType.connect, {'nickname': 'roberto'});
+
+  await sendMessage(
+    conn,
+    MsgType.text,
+    {
+      'from': 'alana',
+      'to': 'joaovperin',
+      'content': 'boa noite !!! tudo certo?'
+    },
+  );
+
+  await sendMessage(conn, MsgType.connect, {'nickname': 'judite'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'afonso'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'andreia'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'foo'});
   await sendMessage(conn, MsgType.connect, {'nickname': 'bar'});
 
   await sendMessage(
@@ -46,8 +83,8 @@ Future<void> main(List<String> arguments) async {
 
   await sendMessage(conn, MsgType.disconnect, {'nickname': 'bar'});
 
-  print('Bye!');
-  exit(0);
+  // print('Bye!');
+  // exit(0);
 }
 
 enum MsgType { connect, text, disconnect }
@@ -77,12 +114,14 @@ Future<void> sendMessage(
 
   final message = '$jsonSizePart.$typePart.$jsonData';
   final utf8EncodedMsg = utf8.encode(message);
+  conn.add(utf8EncodedMsg);
+  conn.flush();
 
   // Send 1 byte at a time to test server capabilities
-  for (final b in utf8EncodedMsg) {
-    conn.add([b]);
-    conn.flush();
-    await Future.delayed(const Duration(milliseconds: 10));
-  }
+  // for (final b in utf8EncodedMsg) {
+  //   conn.add([b]);
+  //   conn.flush();
+  //   await Future.delayed(const Duration(milliseconds: 10));
+  // }
   await Future.delayed(const Duration(milliseconds: 500));
 }
