@@ -1,5 +1,6 @@
 import 'package:client_app/domain/app_chat.dart';
 import 'package:client_app/domain/auth/auth_provider.dart';
+import 'package:client_app/pages/chatroom/widgets/bottom_left_advertisement.widget.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_messages.widget.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_participants.widget.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_typing_field.widget.dart';
@@ -80,19 +81,9 @@ class _ChatroomPageState extends State<ChatroomPage> {
             const SizedBox(height: 8),
             Row(
               children: [
-                Padding(
-                  padding: const EdgeInsets.only(left: 0, right: 4),
-                  child: Container(
-                    width: 320,
-                    height: 90,
-                    padding: const EdgeInsets.all(8),
-                    decoration: BoxDecoration(
-                      border: Border.all(color: Colors.black, width: 2),
-                    ),
-                    child: const Text(
-                      'Compre já nas americanas!!!\nClique aqui e seja feliz',
-                    ),
-                  ),
+                const Padding(
+                  padding: EdgeInsets.only(right: 4),
+                  child: BottomLeftAdvertisementWidget(),
                 ),
                 Expanded(
                   child: ChatroomTypingFieldWidget(
