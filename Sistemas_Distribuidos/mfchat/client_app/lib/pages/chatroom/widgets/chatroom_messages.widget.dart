@@ -1,5 +1,5 @@
 import 'package:client_app/application/infra/scroll_and_drag_scroll_behaviour.dart';
-import 'package:client_app/domain/chat_message.dart';
+import 'package:client_app/domain/app_chat.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_single_message.widget.dart';
 import 'package:flutter/material.dart';
 
@@ -16,24 +16,21 @@ class ChatroomMessagesWidget extends StatefulWidget {
 }
 
 class _ChatroomMessagesWidgetState extends State<ChatroomMessagesWidget> {
-  final List<ChatMessage> _messages = <ChatMessage>[];
+  final List<AppChatMessage> _messages = [];
 
   @override
   void initState() {
     super.initState();
 
-    ChatMessageRepository().firstLoad().then((messages) {
+    AppChatRepository().onMessage().listen((message) {
       setState(() {
-        _messages.addAll(messages);
-      });
-    });
-
-    ChatMessageRepository().onMessage().listen((msg) {
-      setState(() {
-        _messages.add(msg);
-        // _focusNode.requestFocus();
-        // Future.delayed(const Duration(milliseconds: 240))
-        //     .then((_) => _scrollToBottom());
+        _messages.add(message);
+        // TODO: Testar
+        widget._scrollController.animateTo(
+          widget._scrollController.position.maxScrollExtent + 99,
+          duration: const Duration(milliseconds: 400),
+          curve: Curves.fastOutSlowIn,
+        );
       });
     });
   }

@@ -33,33 +33,32 @@ void onSocketConnected(Socket socket, ConnectedMessage message) {
 }
 
 void onSocketTextMessage(Socket socket, TextMessage message) {
-  AppClient? client = clientsRepository.findByNickname(message.data.from);
-  if (client == null) {
-    print('Client not found: ${message.data.from}');
-    return;
-  }
-
-  AppClient? toClient = clientsRepository.findByNickname(message.data.to);
-  if (toClient == null) {
-    print('Client not found: ${message.data.to}');
-    return;
-  }
-
   final msg = TextMessage(
     TextData(
-      from: client.nickname,
-      to: toClient.nickname,
+      from: message.data.from,
+      to: message.data.to,
       content: message.data.content,
     ),
   );
 
+  AppClient? from = clientsRepository.findByNickname(message.data.from);
+  if (from == null) {
+    print('Client not found: ${message.data.from}');
+    return;
+  }
+
   if (msg.data.to == 'all') {
+    final msgBytes = msg.toBytes();
     clientsRepository.listClients().forEach((c) {
-      c.socket.add(msg.toBytes());
-      toClient.socket.add(message.toBytes());
+      c.socket.add(msgBytes);
     });
   } else {
-    toClient.socket.add(message.toBytes());
+    AppClient? to = clientsRepository.findByNickname(message.data.to);
+    if (to == null) {
+      print('Client not found: ${message.data.to}');
+      return;
+    }
+    to.socket.add(msg.toBytes());
   }
 }
 

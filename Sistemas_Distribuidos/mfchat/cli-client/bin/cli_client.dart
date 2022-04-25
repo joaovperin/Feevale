@@ -37,7 +37,7 @@ Future<void> main(List<String> arguments) async {
     MsgType.text,
     {
       'from': 'foo',
-      'to': 'bar',
+      'to': 'all',
       'content': 'Hello!',
     },
   );
@@ -47,6 +47,7 @@ Future<void> main(List<String> arguments) async {
   await sendMessage(conn, MsgType.disconnect, {'nickname': 'bar'});
 
   print('Bye!');
+  exit(0);
 }
 
 enum MsgType { connect, text, disconnect }
@@ -83,5 +84,5 @@ Future<void> sendMessage(
     conn.flush();
     await Future.delayed(const Duration(milliseconds: 10));
   }
-  await Future.delayed(const Duration(milliseconds: 1000));
+  await Future.delayed(const Duration(milliseconds: 500));
 }

@@ -1,5 +1,5 @@
+import 'package:client_app/domain/app_chat.dart';
 import 'package:client_app/domain/auth/auth_provider.dart';
-import 'package:client_app/domain/chat_message.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_messages.widget.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_participants.widget.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_typing_field.widget.dart';
@@ -37,7 +37,7 @@ class _ChatroomPageState extends State<ChatroomPage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('MfChat - ${widget.chatroomName} (new)'),
+        title: Text('MfChat - ${widget.chatroomName}'),
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
@@ -123,8 +123,12 @@ class _ChatroomPageState extends State<ChatroomPage> {
     if (message.trim().isEmpty) {
       return;
     }
-    final _chatMessage = ChatMessage(message.trim());
-    ChatMessageRepository().send(_chatMessage);
+    final chatMessage = AppChatMessage(
+      message,
+      from: AppAuthProvider.of(context).loggedUser!.nickname,
+      to: 'all',
+    );
+    AppChatRepository().text(chatMessage);
     _scrollToBottom();
     _focusNode.requestFocus();
   }
