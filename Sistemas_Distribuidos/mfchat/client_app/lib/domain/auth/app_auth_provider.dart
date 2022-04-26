@@ -29,10 +29,11 @@ class AppAuthProvider extends ChangeNotifier {
   factory AppAuthProvider.of(BuildContext context) =>
       Provider.of<AppAuthProvider>(context, listen: false);
 
-  Future<void> loginViaNickname(String nickname) async {
+  Future<void> loginViaNickname(
+      String address, int port, String username) async {
     try {
-      await AppChatRepository().connect(nickname);
-      _userController.add(AppUser(nickname));
+      await AppChatRepository().connect(address, port, username);
+      _userController.add(AppUser(username));
     } catch (err) {
       rethrow;
     }

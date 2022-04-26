@@ -1,5 +1,5 @@
 import 'package:client_app/domain/app_chat.dart';
-import 'package:client_app/domain/auth/auth_provider.dart';
+import 'package:client_app/domain/auth/app_auth_provider.dart';
 import 'package:client_app/pages/chatroom/widgets/bottom_left_advertisement.widget.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_messages.widget.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_participants.widget.dart';
@@ -137,6 +137,7 @@ class _ChatroomPageState extends State<ChatroomPage> {
         target = nickname;
       }
     });
+    _focusNode.requestFocus();
   }
 
   void _scrollToBottom() {

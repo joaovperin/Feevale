@@ -5,7 +5,7 @@ import 'package:client_app/application/app_chat_repository.impl.dart';
 abstract class AppChatRepository {
   factory AppChatRepository() => AppChatRepositoryImpl.instance;
 
-  Future<void> connect(String username);
+  Future<void> connect(String address, int port, String username);
   Future<void> text(AppChatMessage message);
   Future<void> disconnect(String username);
   Future<void> requestSync(String username);

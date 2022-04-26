@@ -1,6 +1,6 @@
 import 'package:client_app/application/infra/scroll_and_drag_scroll_behaviour.dart';
 import 'package:client_app/domain/app_chat.dart';
-import 'package:client_app/domain/auth/auth_provider.dart';
+import 'package:client_app/domain/auth/app_auth_provider.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_single_participant.widget.dart';
 import 'package:flutter/material.dart';
 

@@ -21,8 +21,8 @@ class AppChatRepositoryImpl implements AppChatRepository {
   AppErrorData? _errorBuffer;
 
   @override
-  Future<void> connect(String username) async {
-    socket = await Socket.connect('localhost', 8100);
+  Future<void> connect(String address, int port, String username) async {
+    socket = await Socket.connect(address, port);
     socket!.listen(
       _onSocketData,
       onDone: _onSocketDone,

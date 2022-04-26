@@ -1,58 +1,54 @@
-import 'package:client_app/application/ui/app_dialogs.dart';
 import 'package:client_app/application/ui/app_loading_service.dart';
-import 'package:client_app/domain/auth/app_auth_provider.dart';
 import 'package:client_app/domain/settings/app_settings_provider.dart';
-import 'package:client_app/pages/chatroom/chatroom.page.dart';
-import 'package:client_app/pages/settings.page.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 
-class HomePage extends StatefulWidget {
-  static const routeName = '/';
-  const HomePage({Key? key}) : super(key: key);
+class SettingsPage extends StatefulWidget {
+  static const routeName = '/settings';
+  const SettingsPage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
+  State<SettingsPage> createState() => _SettingsPageState();
 }
 
-class _HomePageState extends State<HomePage> {
-  late TextEditingController _textController;
+class _SettingsPageState extends State<SettingsPage> {
+  late TextEditingController _addressController;
+  late TextEditingController _portController;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
 
   @override
   void initState() {
     super.initState();
-    _textController = TextEditingController();
+
+    final _oldSettings = AppSettingsProvider.of(context).settings;
+
+    _addressController = TextEditingController()..text = _oldSettings.address;
+    _portController = TextEditingController()
+      ..text = _oldSettings.port.toString();
   }
 
   @override
   void dispose() {
-    _textController.dispose();
+    _addressController.dispose();
+    _portController.dispose();
     super.dispose();
   }
 
-  void _goToChatroom() {
+  void _saveSettingsAndGoBack() {
     if (!_formKey.currentState!.validate()) {
       return;
     }
 
-    final nickname = _textController.text.trim();
+    final address = _addressController.text.trim();
+    final port = int.parse(_portController.text.trim());
 
     final _loader = AppLoading.show(context);
-    final settings = AppSettingsProvider.of(context).settings;
-
-    AppAuthProvider.of(context)
-        .loginViaNickname(settings.address, settings.port, nickname)
-        .then((_) {
+    AppSettingsProvider.of(context).updateSettings(address, port).then((_) {
       _loader.close();
-      Navigator.of(context).pushNamed(ChatroomPage.routeName);
+      Navigator.of(context).pop();
     }).catchError((err) {
       _loader.close();
-      AppDialogs.error(context, message: err.toString());
     });
-  }
-
-  void _goToSettings() {
-    Navigator.of(context).pushNamed(SettingsPage.routeName);
   }
 
   @override
@@ -74,7 +70,7 @@ class _HomePageState extends State<HomePage> {
               children: <Widget>[
                 const SizedBox(height: 16),
                 Text(
-                  'Welcome Back!',
+                  'Settings',
                   style: Theme.of(context).textTheme.headline4,
                 ),
                 const Spacer(),
@@ -85,25 +81,46 @@ class _HomePageState extends State<HomePage> {
                     child: Column(
                       children: [
                         TextFormField(
-                          controller: _textController,
+                          controller: _addressController,
                           autofocus: true,
-                          maxLength: 20,
+                          maxLength: 30,
+                          textInputAction: TextInputAction.next,
                           validator: (String? value) {
-                            if (value == null || value.isEmpty) {
-                              return 'Please enter your nickname';
-                            }
-                            if (value.length < 4) {
-                              return 'Nickname must be at least 4 characters long';
-                            }
-                            if (const ['all'].contains(value)) {
-                              return 'Nickname "$value" is not allowed!';
+                            if (value == null ||
+                                value.isEmpty ||
+                                value.length < 4) {
+                              return 'Please enter the server address';
                             }
                             return null;
                           },
-                          onFieldSubmitted: (_) => _goToChatroom(),
                           decoration: const InputDecoration(
                             border: OutlineInputBorder(),
-                            labelText: 'Nickname',
+                            labelText: 'Address',
+                            counterText: '',
+                            counterStyle: TextStyle(height: double.minPositive),
+                          ),
+                        ),
+                        const SizedBox(height: 16),
+                        TextFormField(
+                          controller: _portController,
+                          autofocus: true,
+                          maxLength: 5,
+                          keyboardType: TextInputType.number,
+                          textInputAction: TextInputAction.next,
+                          inputFormatters: [
+                            FilteringTextInputFormatter.allow(RegExp(r'[0-9]')),
+                          ],
+                          validator: (String? value) {
+                            if (value == null ||
+                                value.isEmpty ||
+                                value.length > 5) {
+                              return 'Please enter the server port';
+                            }
+                            return null;
+                          },
+                          decoration: const InputDecoration(
+                            border: OutlineInputBorder(),
+                            labelText: 'Port',
                             counterText: '',
                             counterStyle: TextStyle(height: double.minPositive),
                           ),
@@ -116,28 +133,12 @@ class _HomePageState extends State<HomePage> {
                             child: Row(
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: const [
-                                Text('Change settings'),
+                                Text('Save'),
                                 SizedBox(width: 8),
-                                Icon(Icons.settings),
+                                Icon(Icons.save),
                               ],
                             ),
-                            onPressed: _goToSettings,
-                          ),
-                        ),
-                        const SizedBox(height: 16),
-                        SizedBox(
-                          height: 48,
-                          width: double.infinity,
-                          child: ElevatedButton(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: const [
-                                Text('Join Chat'),
-                                SizedBox(width: 8),
-                                Icon(Icons.login),
-                              ],
-                            ),
-                            onPressed: _goToChatroom,
+                            onPressed: _saveSettingsAndGoBack,
                           ),
                         ),
                       ],

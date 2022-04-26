@@ -1,5 +1,6 @@
 import 'package:client_app/pages/chatroom/chatroom.page.dart';
 import 'package:client_app/pages/home.page.dart';
+import 'package:client_app/pages/settings.page.dart';
 import 'package:flutter/material.dart';
 
 class AppPages {
@@ -10,5 +11,6 @@ class AppPages {
   static final routes = {
     HomePage.routeName: (BuildContext context) => const HomePage(),
     ChatroomPage.routeName: (BuildContext context) => const ChatroomPage(),
+    SettingsPage.routeName: (BuildContext context) => const SettingsPage(),
   };
 }

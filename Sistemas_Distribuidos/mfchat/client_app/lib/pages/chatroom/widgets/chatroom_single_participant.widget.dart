@@ -1,4 +1,4 @@
-import 'package:client_app/domain/auth/auth_provider.dart';
+import 'package:client_app/domain/auth/app_auth_provider.dart';
 import 'package:flutter/material.dart';
 
 typedef OnTapParticipantFn = void Function(String nickname);
