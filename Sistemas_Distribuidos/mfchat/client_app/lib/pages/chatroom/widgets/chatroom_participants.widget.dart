@@ -5,7 +5,14 @@ import 'package:client_app/pages/chatroom/widgets/chatroom_single_participant.wi
 import 'package:flutter/material.dart';
 
 class ChatroomParticipantsWidget extends StatelessWidget {
-  const ChatroomParticipantsWidget({Key? key}) : super(key: key);
+  const ChatroomParticipantsWidget({
+    required this.onParticipantClicked,
+    required this.target,
+    Key? key,
+  }) : super(key: key);
+
+  final OnTapParticipantFn onParticipantClicked;
+  final String target;
 
   @override
   Widget build(BuildContext context) {
@@ -49,7 +56,11 @@ class ChatroomParticipantsWidget extends StatelessWidget {
                       loggedUser.nickname,
                       data.nicknames,
                     ))
-                      ChatroomSingleParticipantWidget(name: participant),
+                      ChatroomSingleParticipantWidget(
+                        name: participant,
+                        selected: participant == target,
+                        onTap: onParticipantClicked,
+                      ),
                   ]),
                 ),
               ),

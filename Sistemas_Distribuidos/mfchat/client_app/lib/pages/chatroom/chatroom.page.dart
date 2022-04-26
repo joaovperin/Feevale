@@ -19,6 +19,7 @@ class ChatroomPage extends StatefulWidget {
 class _ChatroomPageState extends State<ChatroomPage> {
   late ScrollController _scrollController;
   late FocusNode _focusNode;
+  String target = 'all';
 
   @override
   void initState() {
@@ -59,9 +60,12 @@ class _ChatroomPageState extends State<ChatroomPage> {
             Expanded(
               child: Row(
                 children: [
-                  const Padding(
-                    padding: EdgeInsets.only(right: 4),
-                    child: ChatroomParticipantsWidget(),
+                  Padding(
+                    padding: const EdgeInsets.only(right: 4),
+                    child: ChatroomParticipantsWidget(
+                      onParticipantClicked: _onParticipantClicked,
+                      target: target,
+                    ),
                   ),
                   Expanded(
                     child: Column(
@@ -88,6 +92,7 @@ class _ChatroomPageState extends State<ChatroomPage> {
                 Expanded(
                   child: ChatroomTypingFieldWidget(
                     onSubmit: _sendMessage,
+                    target: target,
                     focusNode: _focusNode,
                   ),
                 ),
@@ -117,11 +122,21 @@ class _ChatroomPageState extends State<ChatroomPage> {
     final chatMessage = AppChatMessage(
       message,
       from: AppAuthProvider.of(context).loggedUser!.nickname,
-      to: 'all',
+      to: target,
     );
     AppChatRepository().text(chatMessage);
     _scrollToBottom();
     _focusNode.requestFocus();
+  }
+
+  void _onParticipantClicked(String nickname) {
+    setState(() {
+      if (target == nickname) {
+        target = 'all';
+      } else {
+        target = nickname;
+      }
+    });
   }
 
   void _scrollToBottom() {

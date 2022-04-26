@@ -4,12 +4,14 @@ class ChatroomTypingFieldWidget extends StatefulWidget {
   const ChatroomTypingFieldWidget({
     Key? key,
     required this.onSubmit,
+    required this.target,
     required FocusNode focusNode,
   })  : _focusNode = focusNode,
         super(key: key);
 
   final ValueChanged<String> onSubmit;
   final FocusNode _focusNode;
+  final String target;
 
   @override
   State<ChatroomTypingFieldWidget> createState() =>
@@ -48,10 +50,10 @@ class _ChatroomTypingFieldWidgetState extends State<ChatroomTypingFieldWidget> {
           },
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
-            labelText: 'Enter text',
+            labelText: 'Enter text (send to ${widget.target})',
             suffix: IconButton(
               icon: const Icon(Icons.send),
-              tooltip: 'Send',
+              tooltip: 'Send to ${widget.target}',
               onPressed: () {
                 widget.onSubmit.call(_textController.text.trim());
                 _textController.clear();

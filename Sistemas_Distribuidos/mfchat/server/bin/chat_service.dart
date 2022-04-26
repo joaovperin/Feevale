@@ -47,25 +47,27 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
     ),
   );
 
-  AppClient? from = clientsRepository.findByNickname(message.data.from);
-  if (from == null) {
-    print('Client not found: ${message.data.from}');
-    return;
-  }
-
+// Broadcast message to all clients
   if (msg.data.to == 'all') {
     final msgBytes = msg.toBytes();
     clientsRepository.listClients().forEach((c) {
       c.socket.add(msgBytes);
     });
-  } else {
-    AppClient? to = clientsRepository.findByNickname(message.data.to);
-    if (to == null) {
-      print('Client not found: ${message.data.to}');
-      return;
-    }
-    to.socket.add(msg.toBytes());
+    return;
   }
+  // Send message to sender and receiver clients
+  AppClient? from = clientsRepository.findByNickname(message.data.from);
+  if (from == null) {
+    print('Client (from) not found: ${message.data.from}');
+    return;
+  }
+  AppClient? to = clientsRepository.findByNickname(message.data.to);
+  if (to == null) {
+    print('Client (to) not found: ${message.data.to}');
+    return;
+  }
+  to.socket.add(msg.toBytes());
+  from.socket.add(msg.toBytes());
 }
 
 void onSocketDisconnected(Socket socket, DisconnectedMessage message) {

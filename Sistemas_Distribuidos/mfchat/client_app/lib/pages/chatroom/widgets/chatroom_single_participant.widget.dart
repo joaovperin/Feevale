@@ -1,13 +1,19 @@
 import 'package:client_app/domain/auth/auth_provider.dart';
 import 'package:flutter/material.dart';
 
+typedef OnTapParticipantFn = void Function(String nickname);
+
 class ChatroomSingleParticipantWidget extends StatelessWidget {
   const ChatroomSingleParticipantWidget({
     Key? key,
     required this.name,
+    required this.selected,
+    required this.onTap,
   }) : super(key: key);
 
   final String name;
+  final bool selected;
+  final OnTapParticipantFn onTap;
 
   @override
   Widget build(BuildContext context) {
@@ -33,10 +39,15 @@ class ChatroomSingleParticipantWidget extends StatelessWidget {
               if (name == _currentLoggedUser) const SizedBox(height: 48),
               if (name != _currentLoggedUser)
                 IconButton(
-                  icon: const Icon(Icons.chat_bubble_outline_rounded),
-                  tooltip: 'Send message',
+                  icon: Icon(
+                    selected
+                        ? Icons.chat_bubble
+                        : Icons.chat_bubble_outline_rounded,
+                    color: selected ? Colors.blue : null,
+                  ),
+                  tooltip: 'Send message to ${selected ? "all" : name}',
                   onPressed: () {
-                    // TODO: Open conversation
+                    onTap.call(name);
                   },
                 ),
             ],
