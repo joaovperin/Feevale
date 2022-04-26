@@ -38,8 +38,8 @@ Future<void> main(List<String> arguments) async {
       buff.clear();
       final typePart =
           int.parse(String.fromCharCodes(_messageBuffer.sublist(9, 11)));
-      final jsonMessage =
-          utf8.decode(_messageBuffer.sublist(12, 12 + jsonSizePart));
+      final strrr = _messageBuffer.sublist(12, 12 + jsonSizePart);
+      final jsonMessage = utf8.decode(strrr);
       final type = AppMessageType.values[typePart];
 
       AppMessage message;

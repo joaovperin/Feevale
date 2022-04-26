@@ -1,24 +1,11 @@
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'messages/connected_message.dart';
-import 'messages/disconnected_message.dart';
-import 'messages/request_sync_message.dart';
-import 'messages/text_message.dart';
-
 enum AppMessageType {
   connected,
   text,
   disconnected,
   requestSync,
-}
-
-extension AppMessageStrategy on AppMessageType {
-  bool get hasData => const [
-        AppMessageType.text,
-        AppMessageType.connected,
-        AppMessageType.disconnected,
-      ].contains(this);
 }
 
 abstract class AppMessageData {
@@ -44,44 +31,22 @@ class AppMessage<T extends AppMessageData> {
 
   Uint8List toBytes() {
     final payload = (data?.toJson() ?? '{}').trim();
-    final buffer = Uint8List(12 + payload.length);
+    final dataBytes = utf8.encode(payload.trim());
+
+    final buffer = Uint8List(12 + dataBytes.length);
     buffer.setRange(
-        0, 8, payload.length.toString().padLeft(8, '0').trim().codeUnits);
+        0, 8, dataBytes.length.toString().padLeft(8, '0').trim().codeUnits);
 
     buffer.setRange(8, 9, '.'.codeUnits);
     buffer.setRange(
         9, 11, type.index.toString().padLeft(2, '0').trim().codeUnits);
     buffer.setRange(11, 12, '.'.codeUnits);
 
-    final dataBytes = utf8.encode(payload.trim());
     buffer.setRange(12, 12 + dataBytes.length, dataBytes);
 
     // buffer.setRange(
     //     0, 3, type.index.toString().padLeft(3, '0').trim().codeUnits);
     // buffer.setRange(3, 3 + dataBytes.length, dataBytes);
     return buffer;
-  }
-
-  static AppMessage fromBytes(Uint8List data) {
-    final typeIdx = int.parse(String.fromCharCodes([...data.getRange(0, 3)]));
-    final type = AppMessageType.values[typeIdx];
-
-    String? dataString;
-    if (type.hasData) {
-      dataString = utf8.decode(data.sublist(3)).trim();
-    }
-
-    switch (type) {
-      case AppMessageType.connected:
-        return ConnectedMessage.parse(dataString!);
-      case AppMessageType.text:
-        return TextMessage.parse(dataString!);
-      case AppMessageType.disconnected:
-        return DisconnectedMessage.parse(dataString!);
-      case AppMessageType.requestSync:
-        return RequestSyncMessage.parse(dataString!);
-      default:
-        throw Exception('Unknown message type: $type');
-    }
   }
 }

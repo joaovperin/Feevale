@@ -20,12 +20,12 @@ class AppEvent {
 
   List<int> toBytes() {
     final jsonData = json.encode(data);
+    final jsonDataBytes = utf8.encode(jsonData);
 
-    final jsonSizePart = jsonData.length.toString().padLeft(8, '0');
+    final jsonSizePart = jsonDataBytes.length.toString().padLeft(8, '0');
     final typePart = type.index.toString().padLeft(2, '0');
 
-    final message = '$jsonSizePart.$typePart.$jsonData';
-    return utf8.encode(message);
+    return utf8.encode('$jsonSizePart.$typePart.') + jsonDataBytes;
   }
 
   Map<String, dynamic> toMap() {

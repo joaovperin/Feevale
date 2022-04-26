@@ -28,12 +28,12 @@ Future<void> main(List<String> arguments) async {
     print('***-> TYPE: $typePart, $jsonMessage <-***');
   });
 
-  await sendMessage(conn, MsgType.connect, {'nickname': 'joao'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'joão'});
   await sendMessage(conn, MsgType.connect, {'nickname': 'perin'});
   await sendMessage(conn, MsgType.connect, {'nickname': 'mariazinha'});
   await sendMessage(conn, MsgType.connect, {'nickname': 'julia'});
   await sendMessage(conn, MsgType.connect, {'nickname': 'carlos'});
-  await sendMessage(conn, MsgType.connect, {'nickname': 'estefani'});
+  await sendMessage(conn, MsgType.connect, {'nickname': 'estéfani'});
   await sendMessage(conn, MsgType.connect, {'nickname': 'eduardo'});
 
   await sendMessage(
@@ -108,13 +108,12 @@ Future<void> sendMessage(
   Map<String, dynamic> data,
 ) async {
   final jsonData = json.encode(data);
+  final encodedJsonData = utf8.encode(jsonData);
 
-  final jsonSizePart = jsonData.length.toString().padLeft(8, '0');
+  final jsonSizePart = encodedJsonData.length.toString().padLeft(8, '0');
   final typePart = type.index.toString().padLeft(2, '0');
 
-  final message = '$jsonSizePart.$typePart.$jsonData';
-  final utf8EncodedMsg = utf8.encode(message);
-  conn.add(utf8EncodedMsg);
+  conn.add(utf8.encode('$jsonSizePart.$typePart.') + encodedJsonData);
   conn.flush();
 
   // Send 1 byte at a time to test server capabilities
@@ -125,3 +124,26 @@ Future<void> sendMessage(
   // }
   await Future.delayed(const Duration(milliseconds: 500));
 }
+// Future<void> sendMessage(
+//   Socket conn,
+//   MsgType type,
+//   Map<String, dynamic> data,
+// ) async {
+//   final jsonData = json.encode(data);
+
+//   final jsonSizePart = jsonData.length.toString().padLeft(8, '0');
+//   final typePart = type.index.toString().padLeft(2, '0');
+
+//   final message = '$jsonSizePart.$typePart.$jsonData';
+//   final utf8EncodedMsg = utf8.encode(message);
+//   conn.add(utf8EncodedMsg);
+//   conn.flush();
+
+//   // Send 1 byte at a time to test server capabilities
+//   // for (final b in utf8EncodedMsg) {
+//   //   conn.add([b]);
+//   //   conn.flush();
+//   //   await Future.delayed(const Duration(milliseconds: 10));
+//   // }
+//   await Future.delayed(const Duration(milliseconds: 500));
+// }

@@ -14,8 +14,9 @@ void _broadcastSync() {
   final _syncEvent = AppEvent.sync(
     _allClients.map((e) => e.nickname).toList(),
   );
+  final evtBytes = _syncEvent.toBytes();
   for (final c in _allClients) {
-    c.socket.add(_syncEvent.toBytes());
+    c.socket.add(evtBytes);
   }
 }
 

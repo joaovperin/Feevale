@@ -72,16 +72,14 @@ class AppChatRepositoryImpl implements AppChatRepository {
       return;
     }
 
-    final jsonSizePart =
-        int.parse(String.fromCharCodes(_dataBuffer.sublist(0, 8)));
+    final jsonSizePart = int.parse(utf8.decode(_dataBuffer.sublist(0, 8)));
     if (_dataBuffer.length < (jsonSizePart + 12)) {
       return;
     }
 
     final _messageBuffer = [..._dataBuffer];
     _dataBuffer.clear();
-    final typePart =
-        int.parse(String.fromCharCodes(_messageBuffer.sublist(9, 11)));
+    final typePart = int.parse(utf8.decode(_messageBuffer.sublist(9, 11)));
     final jsonMessage =
         utf8.decode(_messageBuffer.sublist(12, 12 + jsonSizePart));
 
@@ -111,12 +109,28 @@ Future<void> _sendMessage(
   Map<String, dynamic> data,
 ) async {
   final jsonData = json.encode(data);
+  final encodedJsonData = utf8.encode(jsonData);
 
-  final jsonSizePart = jsonData.length.toString().padLeft(8, '0');
+  final jsonSizePart = encodedJsonData.length.toString().padLeft(8, '0');
   final typePart = type.index.toString().padLeft(2, '0');
 
-  final message = '$jsonSizePart.$typePart.$jsonData';
-  conn.add(utf8.encode(message));
+  conn.add(utf8.encode('$jsonSizePart.$typePart.') + encodedJsonData);
   conn.flush();
   await Future.delayed(const Duration(milliseconds: 1));
 }
+
+// Future<void> _sendMessage(
+//   Socket conn,
+//   MsgType type,
+//   Map<String, dynamic> data,
+// ) async {
+//   final jsonData = json.encode(data);
+
+//   final jsonSizePart = jsonData.length.toString().padLeft(8, '0');
+//   final typePart = type.index.toString().padLeft(2, '0');
+
+//   final message = '$jsonSizePart.$typePart.$jsonData';
+//   conn.add(utf8.encode(message));
+//   conn.flush();
+//   await Future.delayed(const Duration(milliseconds: 1));
+// }

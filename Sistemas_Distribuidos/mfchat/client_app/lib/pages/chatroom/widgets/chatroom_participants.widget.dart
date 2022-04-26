@@ -9,6 +9,7 @@ class ChatroomParticipantsWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final loggedUser = AppAuthProvider.of(context).loggedUser!;
     return Container(
       width: 320,
       height: double.infinity,
@@ -20,8 +21,7 @@ class ChatroomParticipantsWidget extends StatelessWidget {
           stream: AppChatRepository().onSync(),
           builder: (context, snapshot) {
             if (!snapshot.hasData) {
-              AppChatRepository().requestSync(
-                  AppAuthProvider.of(context).loggedUser!.nickname);
+              AppChatRepository().requestSync(loggedUser.nickname);
               return const Center(
                 child: CircularProgressIndicator(),
               );
@@ -45,7 +45,10 @@ class ChatroomParticipantsWidget extends StatelessWidget {
                     ),
                     const Divider(),
                     const SizedBox(height: 48),
-                    for (final participant in [...data.nicknames])
+                    for (final participant in _sortLoggedUserFirst(
+                      loggedUser.nickname,
+                      data.nicknames,
+                    ))
                       ChatroomSingleParticipantWidget(name: participant),
                   ]),
                 ),
@@ -53,5 +56,16 @@ class ChatroomParticipantsWidget extends StatelessWidget {
             );
           }),
     );
+  }
+
+  List<String> _sortLoggedUserFirst(String loggedUser, List<String> nicknames) {
+    final index = nicknames.indexOf(loggedUser);
+    if (index == -1) {
+      return nicknames;
+    }
+    final result = List<String>.from(nicknames);
+    result.removeAt(index);
+    result.insert(0, loggedUser);
+    return result;
   }
 }

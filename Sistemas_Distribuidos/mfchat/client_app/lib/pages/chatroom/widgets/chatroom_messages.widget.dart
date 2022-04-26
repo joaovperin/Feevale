@@ -25,12 +25,6 @@ class _ChatroomMessagesWidgetState extends State<ChatroomMessagesWidget> {
     AppChatRepository().onMessage().listen((message) {
       setState(() {
         _messages.add(message);
-        // TODO: Testar
-        widget._scrollController.animateTo(
-          widget._scrollController.position.maxScrollExtent + 99,
-          duration: const Duration(milliseconds: 400),
-          curve: Curves.fastOutSlowIn,
-        );
       });
     });
   }
