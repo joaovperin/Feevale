@@ -83,6 +83,8 @@ Future<void> main(List<String> arguments) async {
 
   await sendMessage(conn, MsgType.disconnect, {'nickname': 'bar'});
 
+  await sendMessage(conn, MsgType.disconnect, {'nickname': 'alana'});
+
   // print('Bye!');
   // exit(0);
 }

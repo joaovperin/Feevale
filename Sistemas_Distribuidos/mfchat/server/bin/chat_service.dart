@@ -78,11 +78,20 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
   AppClient? from = clientsRepository.findByNickname(message.data.from);
   if (from == null) {
     print('Client (from) not found: ${message.data.from}');
+    socket.add(
+      AppEvent.serverMessageError(
+        'Fail to send message, because the sender "${message.data.to}" is not connected!',
+      ).toBytes(),
+    );
+
     return;
   }
   AppClient? to = clientsRepository.findByNickname(message.data.to);
   if (to == null) {
     print('Client (to) not found: ${message.data.to}');
+    socket.add(AppEvent.serverMessageError(
+      'Fail to send message, because the target "${message.data.to}" is not connected!',
+    ).toBytes());
     return;
   }
   to.socket.add(msg.toBytes());
@@ -94,6 +103,9 @@ void onSocketDisconnected(Socket socket, DisconnectedMessage message) {
 
   if (client == null) {
     print('Client not found: ${message.data.nickname}');
+    socket.add(AppEvent.serverMessageError(
+      'Fail to disconnect ${message.data.nickname} from the server! Nickname not found!',
+    ).toBytes());
     return;
   }
 
@@ -113,6 +125,9 @@ void onSocketRequestSync(Socket socket, RequestSyncMessage message) {
 
   if (client == null) {
     print('Client not found: ${message.data.nickname}');
+    socket.add(AppEvent.serverMessageError(
+      'Fail to sync ${message.data.nickname}! Nickname not found!',
+    ).toBytes());
     return;
   }
 

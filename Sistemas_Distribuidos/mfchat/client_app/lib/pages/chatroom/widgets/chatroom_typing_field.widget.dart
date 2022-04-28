@@ -52,6 +52,7 @@ class _ChatroomTypingFieldWidgetState extends State<ChatroomTypingFieldWidget> {
           decoration: InputDecoration(
             border: const OutlineInputBorder(),
             labelText: 'Enter text (send to ${widget.target})',
+            counterText: '',
             suffix: IconButton(
               icon: const Icon(Icons.send),
               tooltip: 'Send to ${widget.target}',
