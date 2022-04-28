@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -7,6 +8,7 @@ import 'domain/messages/connected_message.dart';
 import 'domain/messages/disconnected_message.dart';
 import 'domain/messages/request_sync_message.dart';
 import 'domain/messages/text_message.dart';
+import 'reminder_service.dart';
 
 const port = 8100;
 
@@ -21,6 +23,14 @@ Future<void> main(List<String> arguments) async {
 
   server.listen((Socket socket) {
     final Map<Socket, List<int>> _buffer = {};
+
+    // Reminders
+    Future.delayed(const Duration(seconds: 25)).then((_) {
+      Timer.periodic(const Duration(seconds: 60), (timer) {
+        broadcastAnyReminder();
+      });
+    });
+
     socket.listen((bytes) {
       _buffer[socket] ??= [];
       final buff = _buffer[socket]!;

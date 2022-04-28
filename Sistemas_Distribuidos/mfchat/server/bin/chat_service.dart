@@ -9,7 +9,7 @@ import 'domain/messages/text_message.dart';
 
 final clientsRepository = AppClientRepository();
 
-void _broadcastEvt(AppEvent event) {
+void broadcastEvt(AppEvent event) {
   final _allClients = clientsRepository.listClients();
   final evtBytes = event.toBytes();
   for (final c in _allClients) {
@@ -35,8 +35,8 @@ void onSocketConnected(Socket socket, ConnectedMessage message) {
 
   final _allUsers =
       clientsRepository.listClients().map((e) => e.nickname).toList();
-  _broadcastEvt(AppEvent.userConnected(client.nickname));
-  _broadcastEvt(AppEvent.sync(_allUsers));
+  broadcastEvt(AppEvent.userConnected(client.nickname));
+  broadcastEvt(AppEvent.sync(_allUsers));
 }
 
 final _forbiddenWordsList = ['palavr[ãa]o', 'fei[oa]s?', 'bobalh[aã]o'];
@@ -99,8 +99,8 @@ void onSocketDisconnected(Socket socket, DisconnectedMessage message) {
 
   final _allUsers =
       clientsRepository.listClients().map((e) => e.nickname).toList();
-  _broadcastEvt(AppEvent.userDisconnected(client.nickname));
-  _broadcastEvt(AppEvent.sync(_allUsers));
+  broadcastEvt(AppEvent.userDisconnected(client.nickname));
+  broadcastEvt(AppEvent.sync(_allUsers));
 }
 
 void onSocketRequestSync(Socket socket, RequestSyncMessage message) {
