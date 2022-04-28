@@ -62,6 +62,7 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
       from: message.data.from,
       to: message.data.to,
       content: message.data.content,
+      datetime: message.data.datetime,
     ),
   );
 

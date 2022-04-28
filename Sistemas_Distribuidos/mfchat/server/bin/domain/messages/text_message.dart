@@ -18,11 +18,13 @@ class TextData extends AppMessageData {
   final String from;
   final String to;
   final String content;
+  final DateTime datetime;
 
   const TextData({
     required this.from,
     required this.to,
     required this.content,
+    required this.datetime,
   });
 
   factory TextData.fromJson(String json) {
@@ -31,6 +33,7 @@ class TextData extends AppMessageData {
       from: data['from'] as String,
       to: data['to'] as String,
       content: data['content'] as String,
+      datetime: DateTime.now(),
     );
   }
 
@@ -40,6 +43,7 @@ class TextData extends AppMessageData {
       'from': from,
       'to': to,
       'content': content,
+      'datetime': datetime.toIso8601String(),
     });
   }
 }

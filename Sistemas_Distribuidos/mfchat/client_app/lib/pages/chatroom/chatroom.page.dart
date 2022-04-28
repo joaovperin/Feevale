@@ -123,6 +123,7 @@ class _ChatroomPageState extends State<ChatroomPage> {
       message,
       from: AppAuthProvider.of(context).loggedUser!.nickname,
       to: target,
+      datetime: DateTime.now(),
     );
     AppChatRepository().text(chatMessage);
     _scrollToBottom();

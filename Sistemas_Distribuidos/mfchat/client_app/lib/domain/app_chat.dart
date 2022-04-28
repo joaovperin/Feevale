@@ -29,11 +29,13 @@ class AppChatMessage implements AppItemList {
   final String from;
   final String to;
   final String content;
+  final DateTime datetime;
 
   const AppChatMessage(
     this.content, {
     required this.from,
     required this.to,
+    required this.datetime,
   });
 
   factory AppChatMessage.fromJson(String json) {
@@ -42,6 +44,7 @@ class AppChatMessage implements AppItemList {
       data['content'] as String,
       from: data['from'] as String,
       to: data['to'] as String,
+      datetime: DateTime.parse(data['datetime'] as String),
     );
   }
 
@@ -50,6 +53,7 @@ class AppChatMessage implements AppItemList {
       'from': from,
       'to': to,
       'content': content,
+      'datetime': datetime.toIso8601String(),
     };
   }
 }

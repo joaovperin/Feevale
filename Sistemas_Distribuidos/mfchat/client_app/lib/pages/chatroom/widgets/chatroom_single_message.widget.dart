@@ -1,11 +1,14 @@
 import 'package:client_app/domain/app_chat.dart';
 import 'package:client_app/domain/auth/app_auth_provider.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 
 class ChatroomSingleMessageWidget extends StatelessWidget {
   const ChatroomSingleMessageWidget(this.message, {Key? key}) : super(key: key);
 
   final AppChatMessage message;
+  static final timeFormat = DateFormat("HH:mm:ss");
+  static final dateTimeFormat = DateFormat("MM-dd/MM/yyyy HH:mm:ss");
 
   @override
   Widget build(BuildContext context) {
@@ -33,6 +36,7 @@ class ChatroomSingleMessageWidget extends StatelessWidget {
                         text: message.to,
                         style: const TextStyle(fontWeight: FontWeight.bold),
                       ),
+                      TextSpan(text: ' (${_fmtDateTime(message.datetime)}) '),
                     ]),
               ),
             ],
@@ -42,6 +46,13 @@ class ChatroomSingleMessageWidget extends StatelessWidget {
         ],
       ),
     );
+  }
+
+  String _fmtDateTime(DateTime datetime) {
+    if (datetime.day == DateTime.now().day) {
+      return timeFormat.format(datetime);
+    }
+    return dateTimeFormat.format(datetime);
   }
 
   Color? _getColor(String currentUser) {
