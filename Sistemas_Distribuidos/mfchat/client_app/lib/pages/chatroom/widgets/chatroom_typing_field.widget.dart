@@ -44,6 +44,7 @@ class _ChatroomTypingFieldWidgetState extends State<ChatroomTypingFieldWidget> {
         child: TextFormField(
           controller: _textController,
           focusNode: widget._focusNode,
+          maxLength: 600,
           onFieldSubmitted: (value) {
             widget.onSubmit.call(_textController.text.trim());
             _textController.clear();
