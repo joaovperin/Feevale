@@ -1,5 +1,6 @@
 import 'package:client_app/application/infra/scroll_and_drag_scroll_behaviour.dart';
 import 'package:client_app/domain/app_chat.dart';
+import 'package:client_app/pages/chatroom/widgets/chatroom_server_message.widget.dart';
 import 'package:client_app/pages/chatroom/widgets/chatroom_single_message.widget.dart';
 import 'package:flutter/material.dart';
 
@@ -16,7 +17,7 @@ class ChatroomMessagesWidget extends StatefulWidget {
 }
 
 class _ChatroomMessagesWidgetState extends State<ChatroomMessagesWidget> {
-  final List<AppChatMessage> _messages = [];
+  final List<AppItemList> _messages = [];
 
   @override
   void initState() {
@@ -25,6 +26,11 @@ class _ChatroomMessagesWidgetState extends State<ChatroomMessagesWidget> {
     AppChatRepository().onMessage().listen((message) {
       setState(() {
         _messages.add(message);
+      });
+    });
+    AppChatRepository().onServerMessage().listen((message) {
+      setState(() {
+        _messages.add(AppServerMessage(message.icon, message.message));
       });
     });
   }
@@ -43,7 +49,15 @@ class _ChatroomMessagesWidgetState extends State<ChatroomMessagesWidget> {
             itemCount: _messages.length,
             separatorBuilder: (context, index) => const Divider(),
             itemBuilder: (context, index) {
-              return ChatroomSingleMessageWidget(_messages[index]);
+              final message = _messages[index];
+
+              if (message is AppChatMessage) {
+                return ChatroomSingleMessageWidget(message);
+              }
+              if (message is AppServerMessage) {
+                return ChatroomServerMessageWidget(message);
+              }
+              return Container();
             },
           ),
         ),

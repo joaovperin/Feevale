@@ -2,8 +2,6 @@ import 'package:client_app/domain/app_chat.dart';
 import 'package:client_app/domain/auth/app_auth_provider.dart';
 import 'package:flutter/material.dart';
 
-// const currentUser = 'joaovperin';
-
 class ChatroomSingleMessageWidget extends StatelessWidget {
   const ChatroomSingleMessageWidget(this.message, {Key? key}) : super(key: key);
 

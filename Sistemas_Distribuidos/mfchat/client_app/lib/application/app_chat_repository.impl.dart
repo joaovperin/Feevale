@@ -13,6 +13,8 @@ class AppChatRepositoryImpl implements AppChatRepository {
       StreamController<AppChatMessage>.broadcast();
 
   static final _syncDataStreamCtrl = StreamController<AppSyncData>.broadcast();
+  static final _serverMessageStreamCtrl =
+      StreamController<AppServerMessageData>.broadcast();
 
   static final _errorStreamCtrl = StreamController<AppErrorData>.broadcast();
 
@@ -62,6 +64,11 @@ class AppChatRepositoryImpl implements AppChatRepository {
   }
 
   @override
+  Stream<AppServerMessageData> onServerMessage() {
+    return _serverMessageStreamCtrl.stream;
+  }
+
+  @override
   Stream<AppErrorData> onError() {
     return _errorStreamCtrl.stream;
   }
@@ -90,6 +97,9 @@ class AppChatRepositoryImpl implements AppChatRepository {
     } else if (type == EvtType.sync) {
       final syncData = AppSyncData.fromJson(jsonMessage);
       _syncDataStreamCtrl.sink.add(syncData);
+    } else if (type == EvtType.serverMessage) {
+      final connectData = AppServerMessageData.fromJson(jsonMessage);
+      _serverMessageStreamCtrl.sink.add(connectData);
     } else if (type == EvtType.error) {
       _errorBuffer = AppErrorData.fromJson(jsonMessage);
       _errorStreamCtrl.sink.add(_errorBuffer!);
@@ -100,7 +110,7 @@ class AppChatRepositoryImpl implements AppChatRepository {
   void _onSocketError(err) {}
 }
 
-enum EvtType { sync, textMessage, error }
+enum EvtType { sync, textMessage, error, serverMessage }
 enum MsgType { connect, text, disconnect, requestSync }
 
 Future<void> _sendMessage(
@@ -118,19 +128,3 @@ Future<void> _sendMessage(
   conn.flush();
   await Future.delayed(const Duration(milliseconds: 1));
 }
-
-// Future<void> _sendMessage(
-//   Socket conn,
-//   MsgType type,
-//   Map<String, dynamic> data,
-// ) async {
-//   final jsonData = json.encode(data);
-
-//   final jsonSizePart = jsonData.length.toString().padLeft(8, '0');
-//   final typePart = type.index.toString().padLeft(2, '0');
-
-//   final message = '$jsonSizePart.$typePart.$jsonData';
-//   conn.add(utf8.encode(message));
-//   conn.flush();
-//   await Future.delayed(const Duration(milliseconds: 1));
-// }

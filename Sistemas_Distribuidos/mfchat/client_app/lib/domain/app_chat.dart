@@ -12,10 +12,20 @@ abstract class AppChatRepository {
 
   Stream<AppChatMessage> onMessage();
   Stream<AppSyncData> onSync();
+  Stream<AppServerMessageData> onServerMessage();
   Stream<AppErrorData> onError();
 }
 
-class AppChatMessage {
+abstract class AppItemList {}
+
+class AppServerMessage implements AppItemList {
+  final String icon;
+  final String message;
+
+  const AppServerMessage(this.icon, this.message);
+}
+
+class AppChatMessage implements AppItemList {
   final String from;
   final String to;
   final String content;
@@ -53,6 +63,36 @@ class AppSyncData {
     final data = jsonDecode(json);
     return AppSyncData(
       List<String>.from(data.map((e) => e as String)),
+    );
+  }
+}
+
+class AppServerMessageData {
+  final String icon;
+  final String message;
+
+  const AppServerMessageData(this.icon, this.message);
+
+  factory AppServerMessageData.fromJson(String json) {
+    final data = jsonDecode(json);
+    return AppServerMessageData(
+      data['icon'] as String,
+      data['message'] as String,
+    );
+  }
+}
+
+class AppUserDisconnectData {
+  final String nickname;
+  final List<String> allUsers;
+
+  const AppUserDisconnectData(this.nickname, this.allUsers);
+
+  factory AppUserDisconnectData.fromJson(String json) {
+    final data = jsonDecode(json);
+    return AppUserDisconnectData(
+      data['user'] as String,
+      List<String>.from(data['list'].map((e) => e as String)),
     );
   }
 }

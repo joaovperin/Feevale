@@ -9,12 +9,9 @@ import 'domain/messages/text_message.dart';
 
 final clientsRepository = AppClientRepository();
 
-void _broadcastSync() {
+void _broadcastEvt(AppEvent event) {
   final _allClients = clientsRepository.listClients();
-  final _syncEvent = AppEvent.sync(
-    _allClients.map((e) => e.nickname).toList(),
-  );
-  final evtBytes = _syncEvent.toBytes();
+  final evtBytes = event.toBytes();
   for (final c in _allClients) {
     c.socket.add(evtBytes);
   }
@@ -35,7 +32,11 @@ void onSocketConnected(Socket socket, ConnectedMessage message) {
 
   clientsRepository.add(client);
   print('Client connected: ${client.describe}');
-  _broadcastSync();
+
+  final _allUsers =
+      clientsRepository.listClients().map((e) => e.nickname).toList();
+  _broadcastEvt(AppEvent.userConnected(client.nickname));
+  _broadcastEvt(AppEvent.sync(_allUsers));
 }
 
 void onSocketTextMessage(Socket socket, TextMessage message) {
@@ -80,7 +81,11 @@ void onSocketDisconnected(Socket socket, DisconnectedMessage message) {
 
   clientsRepository.remove(client);
   print('Client disconnected: ${client.describe}');
-  _broadcastSync();
+
+  final _allUsers =
+      clientsRepository.listClients().map((e) => e.nickname).toList();
+  _broadcastEvt(AppEvent.userDisconnected(client.nickname));
+  _broadcastEvt(AppEvent.sync(_allUsers));
 }
 
 void onSocketRequestSync(Socket socket, RequestSyncMessage message) {

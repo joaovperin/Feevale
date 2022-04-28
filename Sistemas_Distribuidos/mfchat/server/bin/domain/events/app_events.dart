@@ -4,6 +4,29 @@ enum AppEventType {
   sync,
   textMessage,
   error,
+  serverMessage,
+}
+
+class AppServerMessage {
+  final String icon;
+  final String message;
+  const AppServerMessage._(this.icon, this.message);
+
+  factory AppServerMessage.error(String message) =>
+      AppServerMessage._('⚠️ ', message);
+
+  factory AppServerMessage.notification(String message) =>
+      AppServerMessage._('🔔 ', message);
+
+  factory AppServerMessage.pinned(String message) =>
+      AppServerMessage._('📌 ', message);
+
+  Map<String, String> toJson() {
+    return {
+      'icon': icon,
+      'message': message,
+    };
+  }
 }
 
 class AppEvent {
@@ -14,6 +37,14 @@ class AppEvent {
 
   factory AppEvent.sync(List<String> connectedNicknames) =>
       AppEvent._(AppEventType.sync, data: connectedNicknames);
+
+  factory AppEvent.userConnected(String user) =>
+      AppEvent._(AppEventType.serverMessage,
+          data: AppServerMessage.notification('User $user is now online'));
+
+  factory AppEvent.userDisconnected(String user) =>
+      AppEvent._(AppEventType.serverMessage,
+          data: AppServerMessage.notification('User $user is now offline'));
 
   factory AppEvent.error(String cause) =>
       AppEvent._(AppEventType.error, data: cause);
