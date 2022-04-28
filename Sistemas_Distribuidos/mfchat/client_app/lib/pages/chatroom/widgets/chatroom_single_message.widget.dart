@@ -1,7 +1,8 @@
 import 'package:client_app/domain/app_chat.dart';
+import 'package:client_app/domain/auth/app_auth_provider.dart';
 import 'package:flutter/material.dart';
 
-const currentUser = 'joaovperin';
+// const currentUser = 'joaovperin';
 
 class ChatroomSingleMessageWidget extends StatelessWidget {
   const ChatroomSingleMessageWidget(this.message, {Key? key}) : super(key: key);
@@ -10,15 +11,9 @@ class ChatroomSingleMessageWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // TODO: add container and change color if message related to user
-    //// decoration: BoxDecoration(
-    /////// color: message.to == 'all' ? null : Colors.blue.withAlpha(30),
-    /////// color: message.from == 'currentUser' && message.to != 'all' ? null : Colors.amber.withAlpha(30), // ver percent
-    //   color: message.from == 'currentUser' && message.to == 'all' ? null : Colors.blue.withAlpha(30),
-    //   color: (message.from == 'currentUser' && message.to != 'all') || message.to == 'currentUser' ? null : Colors.amber.withAlpha(30), // ver percent
-    // ),
+    final currentUser = AppAuthProvider.of(context).loggedUser!.nickname;
     return Container(
-      decoration: BoxDecoration(color: _getColor()),
+      decoration: BoxDecoration(color: _getColor(currentUser)),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.start,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -51,7 +46,7 @@ class ChatroomSingleMessageWidget extends StatelessWidget {
     );
   }
 
-  Color? _getColor() {
+  Color? _getColor(String currentUser) {
     if (message.from == currentUser) {
       if (message.to == 'all') {
         return Colors.blue.withAlpha(30);
