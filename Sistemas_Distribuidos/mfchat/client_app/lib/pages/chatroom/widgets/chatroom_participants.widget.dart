@@ -70,11 +70,14 @@ class ChatroomParticipantsWidget extends StatelessWidget {
   }
 
   List<String> _sortLoggedUserFirst(String loggedUser, List<String> nicknames) {
-    final index = nicknames.indexOf(loggedUser);
+    final list = [...nicknames];
+    list.sort((a, b) => a.toLowerCase().compareTo(b.toLowerCase()));
+
+    final index = list.indexOf(loggedUser);
     if (index == -1) {
-      return nicknames;
+      return list;
     }
-    final result = List<String>.from(nicknames);
+    final result = List<String>.from(list);
     result.removeAt(index);
     result.insert(0, loggedUser);
     return result;
