@@ -39,7 +39,22 @@ void onSocketConnected(Socket socket, ConnectedMessage message) {
   _broadcastEvt(AppEvent.sync(_allUsers));
 }
 
+final _forbiddenWordsList = ['palavr[ãa]o', 'fei[oa]s?', 'bobalh[aã]o'];
+
 void onSocketTextMessage(Socket socket, TextMessage message) {
+  // Forbidden word filter
+  final _lowerCasedText = message.data.content.toLowerCase();
+  for (final forbiddenWord in _forbiddenWordsList) {
+    if (RegExp(forbiddenWord).hasMatch(_lowerCasedText)) {
+      socket.add(
+        AppEvent.serverMessageError(
+          'Your message was not sent because it contains a forbidden word.',
+        ).toBytes(),
+      );
+      return;
+    }
+  }
+
   final msg = TextMessage(
     TextData(
       from: message.data.from,
@@ -48,7 +63,7 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
     ),
   );
 
-// Broadcast message to all clients
+  // Broadcast message to all clients
   if (msg.data.to == 'all') {
     final msgBytes = msg.toBytes();
     clientsRepository.listClients().forEach((c) {

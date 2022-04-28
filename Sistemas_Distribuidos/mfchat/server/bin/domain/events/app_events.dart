@@ -46,6 +46,10 @@ class AppEvent {
       AppEvent._(AppEventType.serverMessage,
           data: AppServerMessage.notification('User $user is now offline'));
 
+  factory AppEvent.serverMessageError(String cause) =>
+      AppEvent._(AppEventType.serverMessage,
+          data: AppServerMessage.error(cause));
+
   factory AppEvent.error(String cause) =>
       AppEvent._(AppEventType.error, data: cause);
 
