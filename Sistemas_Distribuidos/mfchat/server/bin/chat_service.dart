@@ -35,8 +35,10 @@ void onSocketConnected(Socket socket, ConnectedMessage message) {
 
   final _allUsers =
       clientsRepository.listClients().map((e) => e.nickname).toList();
-  broadcastEvt(AppEvent.userConnected(client.nickname));
   broadcastEvt(AppEvent.sync(_allUsers));
+  Future.delayed(const Duration(milliseconds: 50), () {
+    broadcastEvt(AppEvent.userConnected(client.nickname));
+  });
 }
 
 final _forbiddenWordsList = ['palavr[ãa]o', 'fei[oa]s?', 'bobalh[aã]o'];
@@ -99,8 +101,10 @@ void onSocketDisconnected(Socket socket, DisconnectedMessage message) {
 
   final _allUsers =
       clientsRepository.listClients().map((e) => e.nickname).toList();
-  broadcastEvt(AppEvent.userDisconnected(client.nickname));
   broadcastEvt(AppEvent.sync(_allUsers));
+  Future.delayed(const Duration(milliseconds: 50), () {
+    broadcastEvt(AppEvent.userDisconnected(client.nickname));
+  });
 }
 
 void onSocketRequestSync(Socket socket, RequestSyncMessage message) {

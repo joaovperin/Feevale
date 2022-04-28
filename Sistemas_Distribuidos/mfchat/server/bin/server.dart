@@ -20,16 +20,15 @@ Future<void> main(List<String> arguments) async {
     port,
     shared: true,
   );
+  // Reminders
+  Future.delayed(const Duration(seconds: 15)).then((_) {
+    Timer.periodic(const Duration(seconds: 60), (timer) {
+      broadcastAnyReminder();
+    });
+  });
 
   server.listen((Socket socket) {
     final Map<Socket, List<int>> _buffer = {};
-
-    // Reminders
-    Future.delayed(const Duration(seconds: 25)).then((_) {
-      Timer.periodic(const Duration(seconds: 60), (timer) {
-        broadcastAnyReminder();
-      });
-    });
 
     socket.listen((bytes) {
       _buffer[socket] ??= [];
