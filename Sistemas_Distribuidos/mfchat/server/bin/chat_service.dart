@@ -18,6 +18,8 @@ void broadcastEvt(AppEvent event) {
       c.socket.flush();
     } catch (e) {
       print('error in broadcast ${event.type.name}: $e');
+      clientsRepository.remove(c);
+      print('client ${c.nickname} removed from repository.');
     }
   }
 }
@@ -127,7 +129,7 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
     socket.add(AppEvent.serverMessageError(
       'Fail to send message to ${to.nickname}! Cause: $err!',
     ).toBytes());
-      socket.flush();
+    socket.flush();
   }
 }
 
@@ -178,7 +180,7 @@ void onSocketRequestSync(Socket socket, RequestSyncMessage message) {
   );
   try {
     socket.add(_syncEvent.toBytes());
-      socket.flush();
+    socket.flush();
   } catch (err) {
     print('invalid state 3, client not on connected list: $err');
   }
