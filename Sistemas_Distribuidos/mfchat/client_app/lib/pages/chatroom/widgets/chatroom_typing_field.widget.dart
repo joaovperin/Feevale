@@ -57,6 +57,9 @@ class _ChatroomTypingFieldWidgetState extends State<ChatroomTypingFieldWidget> {
               icon: const Icon(Icons.send),
               tooltip: 'Send to ${widget.target}',
               onPressed: () {
+                if (_textController.text.isEmpty) {
+                  return;
+                }
                 widget.onSubmit.call(_textController.text.trim());
                 _textController.clear();
               },

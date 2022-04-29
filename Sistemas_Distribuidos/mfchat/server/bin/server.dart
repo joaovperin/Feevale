@@ -35,55 +35,65 @@ Future<void> main(List<String> arguments) async {
     final Map<Socket, List<int>> _buffer = {};
 
     socket.listen((bytes) {
-      _buffer[socket] ??= [];
-      final buff = _buffer[socket]!;
-      buff.addAll(bytes);
-
-      if (buff.length < 12) {
-        return;
-      }
-      final jsonSizePart = int.parse(String.fromCharCodes(buff.sublist(0, 8)));
-      if (buff.length < (jsonSizePart + 12)) {
+      if (bytes.isEmpty) {
         return;
       }
 
-      final _messageBuffer = [...buff];
-      buff.clear();
-      final typePart =
-          int.parse(String.fromCharCodes(_messageBuffer.sublist(9, 11)));
-      final strrr = _messageBuffer.sublist(12, 12 + jsonSizePart);
-      final jsonMessage = utf8.decode(strrr);
-      final type = AppMessageType.values[typePart];
+      try {
+        _buffer[socket] ??= [];
+        final buff = _buffer[socket]!;
+        buff.addAll(bytes);
 
-      AppMessage message;
-      switch (type) {
-        case AppMessageType.connected:
-          message = ConnectedMessage.parse(jsonMessage);
-          break;
-        case AppMessageType.text:
-          message = TextMessage.parse(jsonMessage);
-          break;
-        case AppMessageType.disconnected:
-          message = DisconnectedMessage.parse(jsonMessage);
-          break;
-        case AppMessageType.requestSync:
-          message = RequestSyncMessage.parse(jsonMessage);
-          break;
-        default:
-          print('invalid message type $type, ignoring!');
+        if (buff.length < 12) {
           return;
-      }
+        }
+        final jsonSizePart =
+            int.parse(String.fromCharCodes(buff.sublist(0, 8)));
+        if (buff.length < (jsonSizePart + 12)) {
+          return;
+        }
 
-      if (message is ConnectedMessage) {
-        onSocketConnected(socket, message);
-      } else if (message is TextMessage) {
-        onSocketTextMessage(socket, message);
-      } else if (message is DisconnectedMessage) {
-        onSocketDisconnected(socket, message);
-      } else if (message is RequestSyncMessage) {
-        onSocketRequestSync(socket, message);
-      } else {
-        print('Unknown message type: ${message.runtimeType}');
+        final _messageBuffer = [...buff];
+        buff.clear();
+        final typePart =
+            int.parse(String.fromCharCodes(_messageBuffer.sublist(9, 11)));
+        final strrr = _messageBuffer.sublist(12, 12 + jsonSizePart);
+        final jsonMessage = utf8.decode(strrr);
+        final type = AppMessageType.values[typePart];
+
+        AppMessage message;
+        switch (type) {
+          case AppMessageType.connected:
+            message = ConnectedMessage.parse(jsonMessage);
+            break;
+          case AppMessageType.text:
+            message = TextMessage.parse(jsonMessage);
+            break;
+          case AppMessageType.disconnected:
+            message = DisconnectedMessage.parse(jsonMessage);
+            break;
+          case AppMessageType.requestSync:
+            message = RequestSyncMessage.parse(jsonMessage);
+            break;
+          default:
+            print('invalid message type $type, ignoring!');
+            return;
+        }
+
+        if (message is ConnectedMessage) {
+          onSocketConnected(socket, message);
+        } else if (message is TextMessage) {
+          onSocketTextMessage(socket, message);
+        } else if (message is DisconnectedMessage) {
+          onSocketDisconnected(socket, message);
+        } else if (message is RequestSyncMessage) {
+          onSocketRequestSync(socket, message);
+        } else {
+          print('Unknown message type: ${message.runtimeType}');
+        }
+      } catch (e) {
+        socket.destroy();
+        socket.close();
       }
     }, onDone: () {
       onSocketDone(socket);
