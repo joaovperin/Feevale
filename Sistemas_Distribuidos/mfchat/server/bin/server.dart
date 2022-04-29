@@ -91,7 +91,8 @@ Future<void> main(List<String> arguments) async {
         } else {
           print('Unknown message type: ${message.runtimeType}');
         }
-      } catch (e) {
+      } catch (err) {
+        print('ERRRO::: $err');
         socket.destroy();
         socket.close();
       }
