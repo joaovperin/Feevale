@@ -3,7 +3,8 @@ import 'dart:io';
 
 final List<int> _buffer = [];
 
-const defaultHostname = 'localhost';
+// const defaultHostname = 'localhost';
+const defaultHostname = 'ec2-54-200-151-219.us-west-2.compute.amazonaws.com';
 const defaultPort = 8100;
 
 Future<void> main(List<String> arguments) async {
@@ -12,32 +13,57 @@ Future<void> main(List<String> arguments) async {
   String hostname = defaultHostname;
   int port = defaultPort;
   if (arguments.isNotEmpty) {
-    hostname = arguments[0];
+    hostname = arguments[0].trim();
     if (arguments.length > 1) {
       port = int.parse(arguments[1]);
     }
   }
 
-  final conn = await Socket.connect(hostname, port, sourcePort: port);
+  final conn = await Socket.connect(hostname, port);
 
   conn.listen((List<int> event) {
     _buffer.addAll(event);
 
-    if (_buffer.length < 12) {
-      return;
-    }
-    final jsonSizePart = int.parse(String.fromCharCodes(_buffer.sublist(0, 8)));
-    if (_buffer.length < (jsonSizePart + 12)) {
-      return;
-    }
+    try {
+      if (_buffer.length < 12) {
+        return;
+      }
 
-    final _messageBuffer = [..._buffer];
-    _buffer.clear();
-    final typePart =
-        int.parse(String.fromCharCodes(_messageBuffer.sublist(9, 11)));
-    final jsonMessage =
-        utf8.decode(_messageBuffer.sublist(12, 12 + jsonSizePart));
-    print('***-> TYPE: $typePart, $jsonMessage <-***');
+      print('->>>>>>>>>>>>>>>>>>>>> Buffer: ${String.fromCharCodes(_buffer)}');
+
+      final sizeStr = String.fromCharCodes(_buffer.sublist(0, 8));
+      final jsonSizePart = int.tryParse(sizeStr);
+      if (jsonSizePart == null) {
+        print('Invalid size');
+        return;
+      }
+
+      if (_buffer.length < (jsonSizePart + 12)) {
+        return;
+      }
+
+      final _messageBuffer = [..._buffer];
+      _buffer.clear();
+
+      final type = String.fromCharCodes(_messageBuffer.sublist(9, 11));
+
+      final typePart = int.tryParse(type);
+      if (typePart == null) {
+        print('Invalid type');
+        return;
+      }
+
+      final jsonMessage =
+          utf8.decode(_messageBuffer.sublist(12, 12 + jsonSizePart));
+      print('<-*** TYPE: $typePart, $jsonMessage <-***');
+    } catch (err) {
+      print('ERRO: $err');
+    }
+  }, onDone: () {
+    print('Connection closed');
+  }, onError: (err, stack) {
+    print('ERRO: $err');
+    print('Stack: $stack');
   });
 
   await sendMessage(conn, MsgType.connect, {'nickname': 'joão'});
@@ -97,8 +123,9 @@ Future<void> main(List<String> arguments) async {
 
   await sendMessage(conn, MsgType.disconnect, {'nickname': 'alana'});
 
-  // print('Bye!');
-  // exit(0);
+  print('Bye!');
+  conn.destroy();
+  exit(0);
 }
 
 enum MsgType { connect, text, disconnect }
@@ -121,6 +148,7 @@ Future<void> sendMessage(
   MsgType type,
   Map<String, dynamic> data,
 ) async {
+  print('***-> RUN: ${type.name} ${data.toString()}');
   final jsonData = json.encode(data);
   final encodedJsonData = utf8.encode(jsonData);
 
@@ -136,7 +164,7 @@ Future<void> sendMessage(
   //   conn.flush();
   //   await Future.delayed(const Duration(milliseconds: 10));
   // }
-  await Future.delayed(const Duration(milliseconds: 500));
+  await Future.delayed(const Duration(milliseconds: 120));
 }
 // Future<void> sendMessage(
 //   Socket conn,

@@ -13,7 +13,11 @@ void broadcastEvt(AppEvent event) {
   final _allClients = clientsRepository.listClients();
   final evtBytes = event.toBytes();
   for (final c in _allClients) {
-    c.socket.add(evtBytes);
+    try {
+      c.socket.add(evtBytes);
+    } catch (e) {
+      print('error in broadcast ${event.type.name}: $e');
+    }
   }
 }
 
@@ -70,7 +74,14 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
   if (msg.data.to == 'all') {
     final msgBytes = msg.toBytes();
     clientsRepository.listClients().forEach((c) {
-      c.socket.add(msgBytes);
+      try {
+        c.socket.add(msgBytes);
+      } catch (e) {
+        socket.add(
+          AppEvent.serverMessageError('Fail to send message, error: "$e"')
+              .toBytes(),
+        );
+      }
     });
     return;
   }
