@@ -105,8 +105,15 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
     ).toBytes());
     return;
   }
-  to.socket.add(msg.toBytes());
-  from.socket.add(msg.toBytes());
+  try {
+    to.socket.add(msg.toBytes());
+    from.socket.add(msg.toBytes());
+  } catch (err) {
+    print('fail send message from ${from.nickname} to ${to.nickname}: $err');
+    socket.add(AppEvent.serverMessageError(
+      'Fail to send message to ${to.nickname}! Cause: $err!',
+    ).toBytes());
+  }
 }
 
 void onSocketDisconnected(Socket socket, DisconnectedMessage message) {
@@ -114,9 +121,13 @@ void onSocketDisconnected(Socket socket, DisconnectedMessage message) {
 
   if (client == null) {
     print('Client not found: ${message.data.nickname}');
-    socket.add(AppEvent.serverMessageError(
-      'Fail to disconnect ${message.data.nickname} from the server! Nickname not found!',
-    ).toBytes());
+    try {
+      socket.add(AppEvent.serverMessageError(
+        'Fail to disconnect ${message.data.nickname} from the server! Nickname not found!',
+      ).toBytes());
+    } catch (err) {
+      print('invalid state 1, client not on connected list: $err');
+    }
     return;
   }
 
@@ -136,9 +147,13 @@ void onSocketRequestSync(Socket socket, RequestSyncMessage message) {
 
   if (client == null) {
     print('Client not found: ${message.data.nickname}');
-    socket.add(AppEvent.serverMessageError(
-      'Fail to sync ${message.data.nickname}! Nickname not found!',
-    ).toBytes());
+    try {
+      socket.add(AppEvent.serverMessageError(
+        'Fail to sync ${message.data.nickname}! Nickname not found!',
+      ).toBytes());
+    } catch (err) {
+      print('invalid state 2, client not on connected list: $err');
+    }
     return;
   }
 

@@ -6,8 +6,13 @@ final clientsRepository = AppClientRepository();
 void broadcastEvt(AppEvent event) {
   final _allClients = clientsRepository.listClients();
   final evtBytes = event.toBytes();
+
   for (final c in _allClients) {
-    c.socket.add(evtBytes);
+    try {
+      c.socket.add(evtBytes);
+    } catch (err) {
+      print('error in broadcast ${event.type.name} to ${c.nickname}: $err');
+    }
   }
 }
 

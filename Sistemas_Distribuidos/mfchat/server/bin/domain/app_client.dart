@@ -19,11 +19,13 @@ class AppClient {
   String get addr => '${socket.remoteAddress.address}:${socket.remotePort}';
   String get describe => addr;
 
+  // unused
   void send(AppMessage msg) {
     socket.add(msg.toBytes());
     socket.flush();
   }
 
+  // unused
   void onDisconnect() {
     socket.close();
     socket.destroy();
