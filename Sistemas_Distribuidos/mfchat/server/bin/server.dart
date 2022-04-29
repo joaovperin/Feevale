@@ -76,7 +76,8 @@ Future<void> main(List<String> arguments) async {
             message = RequestSyncMessage.parse(jsonMessage);
             break;
           default:
-            print('invalid message type $type, ignoring!');
+            print('invalid message type $type, socket invalid!');
+            socket.destroy();
             return;
         }
 
@@ -90,16 +91,18 @@ Future<void> main(List<String> arguments) async {
           onSocketRequestSync(socket, message);
         } else {
           print('Unknown message type: ${message.runtimeType}');
+          return;
         }
       } catch (err) {
         print('Err: $err');
+        disconnectRelatedClients(socket, 'catch: $err');
         socket.destroy();
-        socket.close();
       }
     }, onDone: () {
-      onSocketDone(socket);
+      disconnectRelatedClients(socket, 'SOCKET_DONE');
     }, onError: (err, stack) {
-      onSocketError(socket, err, stack);
+      disconnectRelatedClients(socket, 'SOCKET_ONERROR');
+      socket.destroy();
     });
   });
 
