@@ -102,6 +102,8 @@ Future<void> main(List<String> arguments) async {
     }, onDone: () {
       disconnectRelatedClients(socket, 'SOCKET_DONE');
     }, onError: (err, stack) {
+      print('Err2: $err');
+      print('Stack2: $stack');
       disconnectRelatedClients(socket, 'SOCKET_ONERROR');
       socket.destroy();
     });
