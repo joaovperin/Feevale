@@ -10,13 +10,17 @@ import 'domain/messages/request_sync_message.dart';
 import 'domain/messages/text_message.dart';
 import 'reminder_service.dart';
 
-const port = 8100;
+const defaultPort = 8100;
 
 Future<void> main(List<String> arguments) async {
+  int port = defaultPort;
+  if (arguments.isNotEmpty) {
+    port = int.parse(arguments.first);
+  }
   print('Trying to start server at port $port....');
 
   final server = await ServerSocket.bind(
-    InternetAddress.anyIPv4,
+    InternetAddress.anyIPv6,
     port,
     shared: true,
   );

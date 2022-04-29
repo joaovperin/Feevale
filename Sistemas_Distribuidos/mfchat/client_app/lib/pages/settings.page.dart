@@ -83,7 +83,7 @@ class _SettingsPageState extends State<SettingsPage> {
                         TextFormField(
                           controller: _addressController,
                           autofocus: true,
-                          maxLength: 30,
+                          maxLength: 80,
                           textInputAction: TextInputAction.next,
                           validator: (String? value) {
                             if (value == null ||

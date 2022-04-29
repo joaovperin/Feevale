@@ -3,10 +3,22 @@ import 'dart:io';
 
 final List<int> _buffer = [];
 
+const defaultHostname = 'localhost';
+const defaultPort = 8100;
+
 Future<void> main(List<String> arguments) async {
   print('Hello world!');
 
-  final conn = await Socket.connect('localhost', 8100);
+  String hostname = defaultHostname;
+  int port = defaultPort;
+  if (arguments.isNotEmpty) {
+    hostname = arguments[0];
+    if (arguments.length > 1) {
+      port = int.parse(arguments[1]);
+    }
+  }
+
+  final conn = await Socket.connect(hostname, port, sourcePort: port);
 
   conn.listen((List<int> event) {
     _buffer.addAll(event);
