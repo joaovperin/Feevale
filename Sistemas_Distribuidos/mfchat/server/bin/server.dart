@@ -93,8 +93,9 @@ Future<void> main(List<String> arguments) async {
           print('Unknown message type: ${message.runtimeType}');
           return;
         }
-      } catch (err) {
+      } catch (err, stack) {
         print('Err: $err');
+        print('Stack: $stack');
         disconnectRelatedClients(socket, 'catch: $err');
         socket.destroy();
       }
