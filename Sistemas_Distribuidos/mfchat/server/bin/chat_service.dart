@@ -77,10 +77,15 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
       try {
         c.socket.add(msgBytes);
       } catch (e) {
-        socket.add(
-          AppEvent.serverMessageError('Fail to send message, error: "$e"')
-              .toBytes(),
-        );
+        print('error in broadcast ${msg.data.content}: $e');
+        try {
+          socket.add(
+            AppEvent.serverMessageError('Fail to send message, error: "$e"')
+                .toBytes(),
+          );
+        } catch(err){
+          print('error in broadcast CATCH ${msg.data.content}: $err');
+        }
       }
     });
     return;
@@ -120,7 +125,7 @@ void onSocketDisconnected(Socket socket, DisconnectedMessage message) {
   final client = clientsRepository.findByNickname(message.data.nickname);
 
   if (client == null) {
-    print('Client not found: ${message.data.nickname}');
+    print('Client not found_2: ${message.data.nickname}');
     try {
       socket.add(AppEvent.serverMessageError(
         'Fail to disconnect ${message.data.nickname} from the server! Nickname not found!',
@@ -146,7 +151,7 @@ void onSocketRequestSync(Socket socket, RequestSyncMessage message) {
   final client = clientsRepository.findByNickname(message.data.nickname);
 
   if (client == null) {
-    print('Client not found: ${message.data.nickname}');
+    print('Client not found_1: ${message.data.nickname}');
     try {
       socket.add(AppEvent.serverMessageError(
         'Fail to sync ${message.data.nickname}! Nickname not found!',
