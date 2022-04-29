@@ -161,7 +161,11 @@ void onSocketRequestSync(Socket socket, RequestSyncMessage message) {
   final _syncEvent = AppEvent.sync(
     _allClients.map((e) => e.nickname).toList(),
   );
-  client.socket.add(_syncEvent.toBytes());
+  try {
+    socket.add(_syncEvent.toBytes());
+  } catch (err) {
+    print('invalid state 3, client not on connected list: $err');
+  }
 }
 
 void disconnectRelatedClients(Socket socket, String reason) {

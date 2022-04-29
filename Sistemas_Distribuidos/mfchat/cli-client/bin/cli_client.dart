@@ -124,6 +124,7 @@ Future<void> main(List<String> arguments) async {
   await sendMessage(conn, MsgType.disconnect, {'nickname': 'alana'});
 
   print('Bye!');
+  await Future.delayed(Duration(seconds: 1));
   conn.destroy();
   exit(0);
 }
