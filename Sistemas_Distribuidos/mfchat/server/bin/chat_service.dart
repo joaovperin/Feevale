@@ -165,8 +165,10 @@ void onSocketRequestSync(Socket socket, RequestSyncMessage message) {
 }
 
 void disconnectRelatedClients(Socket socket, String reason) {
-  clientsRepository.findClientsBySocket(socket).forEach((elm) {
-    print('disconnected ${elm.nickname} ($reason)');
-    clientsRepository.remove(elm);
-  });
+  // is this the bug cause?
+  //...
+  // clientsRepository.findClientsBySocket(socket).forEach((elm) {
+  //   print('disconnected ${elm.nickname} ($reason)');
+  //   clientsRepository.remove(elm);
+  // });
 }
