@@ -10,6 +10,7 @@ void broadcastEvt(AppEvent event) {
   for (final c in _allClients) {
     try {
       c.socket.add(evtBytes);
+      c.socket.flush();
     } catch (err) {
       print('error in broadcast ${event.type.name} to ${c.nickname}: $err');
     }

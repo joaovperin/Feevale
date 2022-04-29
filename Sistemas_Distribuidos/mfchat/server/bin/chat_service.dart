@@ -15,6 +15,7 @@ void broadcastEvt(AppEvent event) {
   for (final c in _allClients) {
     try {
       c.socket.add(evtBytes);
+      c.socket.flush();
     } catch (e) {
       print('error in broadcast ${event.type.name}: $e');
     }
@@ -31,6 +32,7 @@ void onSocketConnected(Socket socket, ConnectedMessage message) {
         'Nickname ${client.nickname} is already taken! Please choose another one.',
       ).toBytes(),
     );
+    socket.flush();
     return;
   }
 
@@ -57,6 +59,7 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
           'Your message was not sent because it contains a forbidden word.',
         ).toBytes(),
       );
+      socket.flush();
       return;
     }
   }
@@ -76,6 +79,7 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
     clientsRepository.listClients().forEach((c) {
       try {
         c.socket.add(msgBytes);
+        c.socket.flush();
       } catch (e) {
         print('error in broadcast ${msg.data.content}: $e');
         try {
@@ -83,7 +87,8 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
             AppEvent.serverMessageError('Fail to send message, error: "$e"')
                 .toBytes(),
           );
-        } catch(err){
+          socket.flush();
+        } catch (err) {
           print('error in broadcast CATCH ${msg.data.content}: $err');
         }
       }
@@ -99,6 +104,7 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
         'Fail to send message, because the sender "${message.data.to}" is not connected!',
       ).toBytes(),
     );
+    socket.flush();
 
     return;
   }
@@ -108,16 +114,20 @@ void onSocketTextMessage(Socket socket, TextMessage message) {
     socket.add(AppEvent.serverMessageError(
       'Fail to send message, because the target "${message.data.to}" is not connected!',
     ).toBytes());
+    socket.flush();
     return;
   }
   try {
     to.socket.add(msg.toBytes());
+    to.socket.flush();
     from.socket.add(msg.toBytes());
+    from.socket.flush();
   } catch (err) {
     print('fail send message from ${from.nickname} to ${to.nickname}: $err');
     socket.add(AppEvent.serverMessageError(
       'Fail to send message to ${to.nickname}! Cause: $err!',
     ).toBytes());
+      socket.flush();
   }
 }
 
@@ -168,6 +178,7 @@ void onSocketRequestSync(Socket socket, RequestSyncMessage message) {
   );
   try {
     socket.add(_syncEvent.toBytes());
+      socket.flush();
   } catch (err) {
     print('invalid state 3, client not on connected list: $err');
   }
