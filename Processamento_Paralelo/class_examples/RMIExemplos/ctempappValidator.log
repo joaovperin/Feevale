@@ -1,0 +1,3 @@
+2012-06-21 16:38:19,972 [Worker-2] DEBUG com.motorolamobility.preflighting.core.logging.PreflightingLogger - Used strings: [app_name]
+2012-06-21 16:38:19,972 [Worker-2] DEBUG com.motorolamobility.preflighting.core.logging.PreflightingLogger - Declared strings: [app_name]
+2012-06-21 16:38:19,972 [Worker-2] DEBUG com.motorolamobility.preflighting.core.logging.PreflightingLogger - Not used strings: []
