@@ -1,10 +1,12 @@
 package br.com.feevale.rmi_server;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Random;
-import java.util.stream.Collectors;
-import java.util.stream.IntStream;
+import java.rmi.NotBoundException;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
+
+import br.com.feevale.rmi_server.server.Server;
+import br.com.feevale.rmi_server.server.ServerData;
 
 /**
  * Hello world!
@@ -12,31 +14,44 @@ import java.util.stream.IntStream;
  */
 public class App {
 
-    private static final int DEF_NUMBER_OF_ARRAYS = 5; // 10
-    private static final int DEF_ARRAY_SIZE = 20; // // 10000
-    private static final int DEF_ARRAY_MAX_VALUE = 999; // unlimited
+    private static final int DEF_NUMBER_OF_ARRAYS = 10;
+    private static final int DEF_ARRAY_SIZE = 10_000;
+    private static final int DEF_ARRAY_MAX_VALUE = 99_9999;
 
-    public static void main(String[] args) {
-        System.out.println("Hello World!");
+    private static final int DEF_PORT = 8090;
+    private static final String DEF_LABEL = "srv";
+
+    public static void main(String[] args) throws RemoteException, InterruptedException {
 
         final int numberOfArrays = DEF_NUMBER_OF_ARRAYS;
         final int arraySize = DEF_ARRAY_SIZE;
         final int maxValue = DEF_ARRAY_MAX_VALUE;
 
-        final List<List<Integer>> allPayloads = new ArrayList<>(numberOfArrays);
+        // Generate ${numberOfArrays} arrays of size ${arraySize} with random values
+        // between 0 and ${maxValue}
+        ServerData.instance
+                .generateDataPayload(numberOfArrays, arraySize, maxValue)
+        // .printPayload()
+        ;
 
-        final var rng = new Random();
-        IntStream.range(0, numberOfArrays).forEach(i -> {
-            allPayloads.add(IntStream.range(0, arraySize)
-                    .mapToObj(j -> rng.nextInt(maxValue))
-                    .collect(Collectors.toList()));
-        });
+        final int srvPort = DEF_PORT;
+        final String srvLabel = DEF_LABEL;
 
-        System.out.println("*** Payloads:");
-        for (var payload : allPayloads) {
-            System.out.println(payload);
-            System.out.println();
-        }
+        // Starts server at port ${srvPort} with label ${srvLabel}
+        final Server server = new Server();
+        final Registry r = LocateRegistry.createRegistry(srvPort);
+        r.rebind(srvLabel, server);
+        System.out.printf("*** Server '%s' started on port %d.\n", srvLabel, srvPort);
 
+        // Prevent server from exiting
+        Runtime.getRuntime().addShutdownHook(new Thread(() -> {
+            try {
+                r.unbind(srvLabel);
+                System.out.printf("*** Shutdown server '%s' of port %d! Bye.\n", srvLabel, srvPort);
+            } catch (RemoteException | NotBoundException e) {
+                e.printStackTrace();
+            }
+        }));
+        Thread.currentThread().join();
     }
 }

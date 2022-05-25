@@ -19,12 +19,20 @@
   </properties>
 
   <dependencies>
+
+    <dependency>
+      <groupId>br.com.feevale</groupId>
+      <artifactId>rmi_commons</artifactId>
+      <version>1.0.0</version>
+    </dependency>
+
     <dependency>
       <groupId>org.junit.jupiter</groupId>
       <artifactId>junit-jupiter</artifactId>
       <version>5.8.2</version>
       <scope>test</scope>
     </dependency>
+
   </dependencies>
 
   <build>
@@ -50,6 +58,15 @@
         <plugin>
           <artifactId>maven-jar-plugin</artifactId>
           <version>3.0.2</version>
+        </plugin>
+
+        <plugin>
+          <groupId>org.codehaus.mojo</groupId>
+          <artifactId>exec-maven-plugin</artifactId>
+          <version>1.4.0</version>
+          <configuration>
+            <mainClass>br.com.feevale.rmi_server.App</mainClass>
+          </configuration>
         </plugin>
       </plugins>
     </pluginManagement>

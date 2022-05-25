@@ -1,13 +1,11 @@
 package br.com.feevale.rmi_commons;
 
-import java.io.Serializable;
+import java.rmi.Remote;
 import java.rmi.RemoteException;
 
-public interface IServer extends Serializable {
+public interface IServer extends Remote {
 
-    static final long serialVersionUID = 193873226431L;
-
-    public DataPayload getNext() throws RemoteException;
+    public MaybeData<DataPayload> getNext() throws RemoteException;
 
     public void done(DataPayload payload) throws RemoteException;
 

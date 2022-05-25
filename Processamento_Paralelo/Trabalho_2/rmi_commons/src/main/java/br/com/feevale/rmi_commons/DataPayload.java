@@ -10,7 +10,8 @@ public class DataPayload implements Serializable {
     final List<Integer> list;
 
     public DataPayload(String jsonPayload) {
-        this.list = DataPayloadParser.parseList(jsonPayload).getList();
+        this.list = DataPayloadParser.parseList(jsonPayload)
+                .getList();
     }
 
     public DataPayload(List<Integer> list) {
