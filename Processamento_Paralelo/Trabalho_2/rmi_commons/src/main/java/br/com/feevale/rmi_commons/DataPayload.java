@@ -5,6 +5,8 @@ import java.util.List;
 
 public class DataPayload implements Serializable {
 
+    private static final long serialVersionUID = 161843628764L;
+
     final List<Integer> list;
 
     public DataPayload(String jsonPayload) {
@@ -15,7 +17,7 @@ public class DataPayload implements Serializable {
         this.list = list;
     }
 
-    List<Integer> getList() {
+    public List<Integer> getList() {
         return list;
     }
 

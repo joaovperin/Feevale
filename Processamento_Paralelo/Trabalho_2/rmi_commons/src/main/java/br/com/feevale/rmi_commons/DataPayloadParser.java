@@ -1,10 +1,9 @@
 package br.com.feevale.rmi_commons;
 
-import java.io.Serializable;
 import java.util.Arrays;
 import java.util.stream.Collectors;
 
-class DataPayloadParser implements Serializable {
+class DataPayloadParser {
 
     private DataPayloadParser() {
         throw new RuntimeException("Utility class, not to be instantiated");
